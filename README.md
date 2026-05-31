@@ -43,3 +43,18 @@ No environment variables needed — all data comes from Polymarket's public APIs
 - **Data API** — Recent trades, open interest
 
 All read-only and publicly accessible.
+
+## CLI Analysis Script
+
+In addition to the web dashboard, polyLink includes a CLI analysis tool:
+
+```bash
+node scripts/analyze.mjs trending
+node scripts/analyze.mjs search "bitcoin"
+node scripts/analyze.mjs market will-donald-trump-win-the-2024-presidential-election
+node scripts/analyze.mjs book TOKEN_ID
+node scripts/analyze.mjs history CONDITION_ID
+node scripts/analyze.mjs trades
+```
+
+Great for quick terminal lookups or scripting automated analysis.

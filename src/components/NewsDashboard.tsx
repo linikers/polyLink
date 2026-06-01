@@ -34,13 +34,18 @@ export default function NewsDashboard() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string | null>(null);
+  const [lastFetch, setLastFetch] = useState<number>(0);
 
   useEffect(() => {
     let cancelled = false;
     async function load() {
+      setLoading(true);
       try {
         const items = await fetchNews(filter ?? undefined);
-        if (!cancelled) setNews(items);
+        if (!cancelled) {
+          setNews(items);
+          setLastFetch(Date.now());
+        }
       } catch {
         if (!cancelled) setNews([]);
       } finally {
@@ -48,9 +53,21 @@ export default function NewsDashboard() {
       }
     }
     load();
-    const interval = setInterval(load, 120000);
-    return () => { cancelled = true; clearInterval(interval); };
   }, [filter]);
+
+  const handleRefresh = () => {
+    setLoading(true);
+    fetchNews(filter ?? undefined).then((items) => {
+      setNews(items);
+      setLastFetch(Date.now());
+      setLoading(false);
+    }).catch(() => {
+      setNews([]);
+      setLoading(false);
+    });
+  };
+
+  const canRefresh = Date.now() - lastFetch > 15000; // 15s debounce
 
   const categories = [
     { id: null, label: "Todas" },
@@ -94,9 +111,26 @@ export default function NewsDashboard() {
           ⚡ Modo simulado — configure <code>NEXT_PUBLIC_NEWSAPI_KEY</code> no .env para notícias reais
         </Typography>
       )}
-      <Typography variant="body2" sx={{ color: "#8b949e", mb: 3 }}>
-        Notícias relacionadas a mercados de previsão — atualizado a cada 2 min
-      </Typography>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+        <Typography variant="body2" sx={{ color: "#8b949e" }}>
+          {lastFetch > 0
+            ? `Última atualização: ${new Date(lastFetch).toLocaleTimeString("pt-BR")}`
+            : "Clique em Atualizar para buscar notícias"}
+        </Typography>
+        <Chip
+          label={loading ? "Carregando..." : "Atualizar"}
+          onClick={handleRefresh}
+          disabled={loading || !canRefresh}
+          variant="outlined"
+          size="small"
+          sx={{
+            color: loading ? "#484f58" : "#8b949e",
+            borderColor: "#30363d",
+            cursor: loading ? "default" : "pointer",
+            "&:hover": loading ? {} : { borderColor: "#7c3aed", color: "#e6edf3" },
+          }}
+        />
+      </Box>
 
       {loading ? (
         <Box sx={{ textAlign: "center", py: 6 }}>

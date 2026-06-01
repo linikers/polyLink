@@ -20,13 +20,16 @@ import StarBorderIcon from "@mui/icons-material/StarBorder";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ShowChartIcon from "@mui/icons-material/ShowChart";
+import WhaleIcon from "@mui/icons-material/WaterDrop";
 import Link from "next/link";
 import { useLang } from "@/lib/lang";
 import AlertCenter from "./AlertCenter";
+import WhaleDashboard from "./WhaleDashboard";
 
 const tabs = [
   { id: "dashboard", labelKey: "admin.dashboard", icon: <DashboardIcon /> },
   { id: "favorites", labelKey: "admin.favorites", icon: <StarBorderIcon /> },
+  { id: "whales", labelKey: "admin.whales", icon: <WhaleIcon /> },
   { id: "alerts", labelKey: "admin.alerts", icon: <NotificationsIcon /> },
   { id: "settings", labelKey: "admin.settings", icon: <SettingsIcon /> },
 ];
@@ -49,8 +52,13 @@ export default function AdminLayout({ activeTab = "dashboard", children }: Props
     <AlertCenter onUnreadChange={handleUnreadChange} />
   );
 
+  const whaleContent = (
+    <WhaleDashboard />
+  );
+
   const content = children || (
-    tab === "alerts" ? alertContent : (
+    tab === "alerts" ? alertContent :
+    tab === "whales" ? whaleContent : (
       <Grid2 container spacing={3}>
         {/* Stats cards */}
         {[

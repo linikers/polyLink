@@ -53,6 +53,17 @@ const translations: Record<Lang, Record<string, string>> = {
     "trades.size": "Tam.",
     "trades.buy": "COMPRA",
     "trades.sell": "VENDA",
+    // Admin
+    "nav.admin": "Admin",
+    "admin.dashboard": "Dashboard",
+    "admin.favorites": "Favoritos",
+    "admin.alerts": "Alertas",
+    "admin.settings": "Configurações",
+    "admin.favoritesCount": "Mercados Favoritos",
+    "admin.alertsCount": "Alertas Ativos",
+    "admin.watchingCount": "Observando",
+    "admin.placeholder": "Comece a explorar mercados",
+    "admin.placeholderDesc": "Salve mercados como favoritos, crie alertas de preço e gerencie suas preferências aqui.",
   },
   en: {
     "brand.subtitle": "Polymarket Dashboard",
@@ -92,6 +103,17 @@ const translations: Record<Lang, Record<string, string>> = {
     "trades.size": "Size",
     "trades.buy": "BUY",
     "trades.sell": "SELL",
+    // Admin
+    "nav.admin": "Admin",
+    "admin.dashboard": "Dashboard",
+    "admin.favorites": "Favorites",
+    "admin.alerts": "Alerts",
+    "admin.settings": "Settings",
+    "admin.favoritesCount": "Favorite Markets",
+    "admin.alertsCount": "Active Alerts",
+    "admin.watchingCount": "Watching",
+    "admin.placeholder": "Start exploring markets",
+    "admin.placeholderDesc": "Save markets as favorites, set price alerts, and manage your preferences here.",
   },
 };
 

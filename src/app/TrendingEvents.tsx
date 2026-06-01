@@ -27,7 +27,7 @@ export default function TrendingEvents() {
     );
   }
 
-  if (!events) {
+  if (!events || !Array.isArray(events)) {
     return (
       <Box sx={{ textAlign: "center", py: 4 }}>
         <Typography variant="body2" sx={{ color: "#8b949e" }}>
@@ -49,8 +49,8 @@ export default function TrendingEvents() {
 
   return (
     <Grid2 container spacing={2}>
-      {events.map((evt: any) => (
-        <Grid2 key={evt.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+      {events.filter(Boolean).map((evt: any) => (
+        <Grid2 key={evt?.id ?? Math.random()} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
           <EventCard event={evt} />
         </Grid2>
       ))}

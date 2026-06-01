@@ -19,8 +19,9 @@ interface Props {
 
 export default function EventCard({ event }: Props) {
   const { t } = useLang();
+  if (!event) return null;
   const market = event.markets?.[0];
-  if (!market) return null;
+  if (!market || !event.slug) return null;
 
   const p = parseMarket(market);
   const yesPrice = p.outcomePricesParsed[0] ?? "0";

@@ -22,15 +22,18 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import ShowChartIcon from "@mui/icons-material/ShowChart";
 import WhaleIcon from "@mui/icons-material/WaterDrop";
 import NewReleasesIcon from "@mui/icons-material/NewReleases";
+import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 import Link from "next/link";
 import { useLang } from "@/lib/lang";
 import AlertCenter from "./AlertCenter";
 import WhaleDashboard from "./WhaleDashboard";
 import NewsDashboard from "./NewsDashboard";
+import ArbitrageEngine from "./ArbitrageEngine";
 
 const tabs = [
   { id: "dashboard", labelKey: "admin.dashboard", icon: <DashboardIcon /> },
   { id: "favorites", labelKey: "admin.favorites", icon: <StarBorderIcon /> },
+  { id: "arbitrage", labelKey: "admin.arbitrage", icon: <AutoFixHighIcon /> },
   { id: "whales", labelKey: "admin.whales", icon: <WhaleIcon /> },
   { id: "news", labelKey: "admin.news", icon: <NewReleasesIcon /> },
   { id: "alerts", labelKey: "admin.alerts", icon: <NotificationsIcon /> },
@@ -63,10 +66,15 @@ export default function AdminLayout({ activeTab = "dashboard", children }: Props
     <NewsDashboard />
   );
 
+  const arbitrageContent = (
+    <ArbitrageEngine />
+  );
+
   const content = children || (
     tab === "alerts" ? alertContent :
     tab === "whales" ? whaleContent :
-    tab === "news" ? newsContent : (
+    tab === "news" ? newsContent :
+    tab === "arbitrage" ? arbitrageContent : (
       <Grid2 container spacing={3}>
         {/* Stats cards */}
         {[

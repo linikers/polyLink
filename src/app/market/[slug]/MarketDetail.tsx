@@ -18,17 +18,19 @@ import { fmtVolume, fmtPercent, parseMarket } from "@/lib/api";
 import OrderBook from "@/components/OrderBook";
 import PriceChart from "@/components/PriceHistoryChart";
 import RecentTrades from "@/components/RecentTrades";
+import { useLang } from "@/lib/lang";
 
 interface Props {
   event: GammaEvent;
 }
 
 export default function MarketDetail({ event }: Props) {
+  const { t } = useLang();
   const market = event.markets?.[0];
   if (!market) {
     return (
       <Container maxWidth="md" sx={{ py: 8, textAlign: "center" }}>
-        <Typography sx={{ color: "#8b949e" }}>No markets in this event.</Typography>
+        <Typography sx={{ color: "#8b949e" }}>{t("detail.nomarkets")}</Typography>
       </Container>
     );
   }
@@ -45,16 +47,16 @@ export default function MarketDetail({ event }: Props) {
     <Container maxWidth="lg" sx={{ py: 4 }}>
       {/* Back link */}
       <Link href="/" style={{ color: "#7c3aed", textDecoration: "none", fontSize: 14 }}>
-        ← Back to markets
+        {t("detail.back")}
       </Link>
 
       {/* Header */}
       <Box sx={{ mt: 2, mb: 4 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
           <Typography variant="caption" sx={{ color: "#8b949e", textTransform: "uppercase", letterSpacing: 1 }}>
-            {event.category ?? "Prediction Market"}
+            {event.category ?? t("event.category.default")}
           </Typography>
-          {closed && <Chip label="CLOSED" size="small" sx={{ color: "#f85149", borderColor: "#f85149" }} />}
+          {closed && <Chip label={t("event.closed")} size="small" sx={{ color: "#f85149", borderColor: "#f85149" }} />}
         </Box>
         <Typography variant="h4" sx={{ fontWeight: 700, color: "#e6edf3", mb: 1 }}>
           {event.title}
@@ -72,14 +74,14 @@ export default function MarketDetail({ event }: Props) {
           <Card sx={{ bgcolor: "#161b22", border: "1px solid #30363d", borderRadius: 2 }}>
             <CardContent>
               <Typography variant="subtitle2" sx={{ color: "#8b949e", mb: 1.5 }}>
-                Current Probability
+                {t("detail.probability")}
               </Typography>
               <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
                 <Typography variant="body2" sx={{ color: "#3fb950", fontWeight: 600 }}>
-                  Yes {fmtPercent(yesPrice)}
+                  {t("event.yes")} {fmtPercent(yesPrice)}
                 </Typography>
                 <Typography variant="body2" sx={{ color: "#f85149", fontWeight: 600 }}>
-                  No {fmtPercent(noPrice)}
+                  {t("event.no")} {fmtPercent(noPrice)}
                 </Typography>
               </Box>
               <Box sx={{ display: "flex", borderRadius: 1, overflow: "hidden", height: 12, bgcolor: "#21262d" }}>
@@ -93,29 +95,29 @@ export default function MarketDetail({ event }: Props) {
           <Card sx={{ bgcolor: "#161b22", border: "1px solid #30363d", borderRadius: 2 }}>
             <CardContent>
               <Typography variant="subtitle2" sx={{ color: "#8b949e", mb: 1.5 }}>
-                Market Stats
+                {t("detail.stats")}
               </Typography>
               <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1 }}>
                 <Box>
-                  <Typography variant="caption" sx={{ color: "#8b949e" }}>Volume</Typography>
+                  <Typography variant="caption" sx={{ color: "#8b949e" }}>{t("detail.volume")}</Typography>
                   <Typography variant="body2" sx={{ color: "#e6edf3", fontWeight: 600 }}>
                     {fmtVolume(event.volume)}
                   </Typography>
                 </Box>
                 <Box>
-                  <Typography variant="caption" sx={{ color: "#8b949e" }}>Liquidity</Typography>
+                  <Typography variant="caption" sx={{ color: "#8b949e" }}>{t("detail.liquidity")}</Typography>
                   <Typography variant="body2" sx={{ color: "#e6edf3", fontWeight: 600 }}>
                     {fmtVolume(event.liquidity ?? 0)}
                   </Typography>
                 </Box>
                 <Box>
-                  <Typography variant="caption" sx={{ color: "#8b949e" }}>Open Interest</Typography>
+                  <Typography variant="caption" sx={{ color: "#8b949e" }}>{t("detail.openInterest")}</Typography>
                   <Typography variant="body2" sx={{ color: "#e6edf3", fontWeight: 600 }}>
                     {fmtVolume(event.openInterest ?? 0)}
                   </Typography>
                 </Box>
                 <Box>
-                  <Typography variant="caption" sx={{ color: "#8b949e" }}>Markets</Typography>
+                  <Typography variant="caption" sx={{ color: "#8b949e" }}>{t("detail.markets")}</Typography>
                   <Typography variant="body2" sx={{ color: "#e6edf3", fontWeight: 600 }}>
                     {event.markets?.length ?? 0}
                   </Typography>
@@ -130,7 +132,7 @@ export default function MarketDetail({ event }: Props) {
       {conditionId && !closed && (
         <Box sx={{ mb: 4 }}>
           <Typography variant="h6" sx={{ fontWeight: 600, color: "#e6edf3", mb: 2 }}>
-            Price History (Yes)
+            {t("detail.priceHistory")}
           </Typography>
           <PriceChart conditionId={conditionId} />
         </Box>
@@ -141,13 +143,13 @@ export default function MarketDetail({ event }: Props) {
         <Grid2 container spacing={3}>
           <Grid2 size={{ xs: 12, md: 6 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, color: "#e6edf3", mb: 2 }}>
-              Orderbook (Yes)
+              {t("detail.orderbook")}
             </Typography>
             <OrderBook tokenId={yesTokenId} />
           </Grid2>
           <Grid2 size={{ xs: 12, md: 6 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, color: "#e6edf3", mb: 2 }}>
-              Recent Trades
+              {t("detail.trades")}
             </Typography>
             <RecentTrades conditionId={conditionId} />
           </Grid2>
@@ -157,7 +159,7 @@ export default function MarketDetail({ event }: Props) {
       {closed && (
         <Box sx={{ textAlign: "center", py: 4 }}>
           <Typography variant="body1" sx={{ color: "#8b949e" }}>
-            This market is closed. No live orderbook or trades available.
+            {t("detail.closed")}
           </Typography>
         </Box>
       )}

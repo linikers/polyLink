@@ -16,12 +16,14 @@ import {
   Chip,
 } from "@mui/material";
 import { getRecentTrades, fmtPercent } from "@/lib/api";
+import { useLang } from "@/lib/lang";
 
 interface Props {
   conditionId: string;
 }
 
 export default function RecentTrades({ conditionId }: Props) {
+  const { t } = useLang();
   const [trades, setTrades] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -67,9 +69,9 @@ export default function RecentTrades({ conditionId }: Props) {
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell sx={{ color: "#8b949e", borderColor: "#30363d", py: 1 }}>Side</TableCell>
-                <TableCell sx={{ color: "#8b949e", borderColor: "#30363d", py: 1 }} align="right">Price</TableCell>
-                <TableCell sx={{ color: "#8b949e", borderColor: "#30363d", py: 1 }} align="right">Size</TableCell>
+                <TableCell sx={{ color: "#8b949e", borderColor: "#30363d", py: 1 }}>{t("trades.side")}</TableCell>
+                <TableCell sx={{ color: "#8b949e", borderColor: "#30363d", py: 1 }} align="right">{t("trades.price")}</TableCell>
+                <TableCell sx={{ color: "#8b949e", borderColor: "#30363d", py: 1 }} align="right">{t("trades.size")}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -77,7 +79,7 @@ export default function RecentTrades({ conditionId }: Props) {
                 <TableRow key={`trade-${i}`}>
                   <TableCell sx={{ borderColor: "#30363d", py: 0.75 }}>
                     <Chip
-                      label={t.side === "BUY" ? "BUY" : "SELL"}
+                      label={t.side === "BUY" ? t("trades.buy") : t("trades.sell")}
                       size="small"
                       sx={{
                         height: 20,

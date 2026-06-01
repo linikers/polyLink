@@ -15,8 +15,8 @@ export default function HomePage() {
           polyLink
         </Typography>
         <Typography variant="body1" sx={{ color: "#8b949e", maxWidth: 600, mx: "auto", mb: 3 }}>
-          Real-time Polymarket prediction market dashboard — track probabilities,
-          volume, and market movements.
+          Dashboard em tempo real do Polymarket — acompanhe probabilidades,
+          volume e movimentos do mercado.
         </Typography>
       </Box>
 
@@ -29,7 +29,7 @@ export default function HomePage() {
       <Box sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1 }}>
         <TrendingUpIcon sx={{ color: "#7c3aed" }} />
         <Typography variant="h5" sx={{ fontWeight: 700, color: "#e6edf3" }}>
-          Trending Markets
+          Mercados em Alta
         </Typography>
       </Box>
       <TrendingEvents />

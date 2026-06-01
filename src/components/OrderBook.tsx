@@ -15,12 +15,14 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { getOrderBook, fmtPercent } from "@/lib/api";
+import { useLang } from "@/lib/lang";
 
 interface Props {
   tokenId: string;
 }
 
 export default function OrderBook({ tokenId }: Props) {
+  const { t } = useLang();
   const [data, setData] = useState<{ bids: any[]; asks: any[]; last?: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -69,8 +71,8 @@ export default function OrderBook({ tokenId }: Props) {
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell sx={{ color: "#8b949e", borderColor: "#30363d", py: 1.5 }}>Price</TableCell>
-                <TableCell sx={{ color: "#8b949e", borderColor: "#30363d", py: 1.5 }} align="right">Size</TableCell>
+                <TableCell sx={{ color: "#8b949e", borderColor: "#30363d", py: 1.5 }}>{t("orderbook.price")}</TableCell>
+                <TableCell sx={{ color: "#8b949e", borderColor: "#30363d", py: 1.5 }} align="right">{t("orderbook.size")}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -88,7 +90,7 @@ export default function OrderBook({ tokenId }: Props) {
               {/* Spread */}
               <TableRow>
                 <TableCell sx={{ color: "#8b949e", borderColor: "#30363d", py: 0.75, fontSize: 11 }} colSpan={2} align="center">
-                  Last: {data.last ? fmtPercent(data.last) : "—"}
+                  {t("orderbook.last")} {data.last ? fmtPercent(data.last) : "—"}
                 </TableCell>
               </TableRow>
               {/* Bids (buy orders) */}

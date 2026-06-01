@@ -1,28 +1,47 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Grid2, Box, Typography } from "@mui/material";
 import EventCard from "@/components/EventCard";
 import { getTrendingEvents } from "@/lib/api";
+import { useLang } from "@/lib/lang";
 
-export const revalidate = 30;
+export default function TrendingEvents() {
+  const { t } = useLang();
+  const [events, setEvents] = useState<any[] | null>(null);
+  const [error, setError] = useState(false);
 
-export default async function TrendingEvents() {
-  let events;
-  try {
-    events = await getTrendingEvents(12);
-  } catch {
+  useEffect(() => {
+    getTrendingEvents(12)
+      .then(setEvents)
+      .catch(() => setError(true));
+  }, []);
+
+  if (error) {
     return (
       <Box sx={{ textAlign: "center", py: 4 }}>
         <Typography variant="body2" sx={{ color: "#f85149" }}>
-          Failed to load trending markets. The Polymarket API may be temporarily unavailable.
+          {t("trending.error")}
         </Typography>
       </Box>
     );
   }
 
-  if (!events || events.length === 0) {
+  if (!events) {
     return (
       <Box sx={{ textAlign: "center", py: 4 }}>
         <Typography variant="body2" sx={{ color: "#8b949e" }}>
-          No trending markets at the moment.
+          {t("trending.empty")}
+        </Typography>
+      </Box>
+    );
+  }
+
+  if (events.length === 0) {
+    return (
+      <Box sx={{ textAlign: "center", py: 4 }}>
+        <Typography variant="body2" sx={{ color: "#8b949e" }}>
+          {t("trending.empty")}
         </Typography>
       </Box>
     );

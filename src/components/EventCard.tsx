@@ -11,12 +11,14 @@ import {
 import Link from "next/link";
 import type { GammaEvent } from "@/lib/types";
 import { fmtPercent, fmtVolume, parseMarket } from "@/lib/api";
+import { useLang } from "@/lib/lang";
 
 interface Props {
   event: GammaEvent;
 }
 
 export default function EventCard({ event }: Props) {
+  const { t } = useLang();
   const market = event.markets?.[0];
   if (!market) return null;
 
@@ -45,7 +47,7 @@ export default function EventCard({ event }: Props) {
       <CardContent sx={{ p: 2.5, "&:last-child": { pb: 2.5 } }}>
         {/* Header */}
         <Typography variant="body2" sx={{ color: "#8b949e", mb: 0.5 }}>
-          {event.category ?? "Prediction Market"}
+          {event.category ?? t("event.category.default")}
         </Typography>
         <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2, lineHeight: 1.3 }}>
           {event.title}
@@ -54,8 +56,8 @@ export default function EventCard({ event }: Props) {
         {/* Probability bar */}
         <Box sx={{ mb: 1.5 }}>
           <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
-            <Typography variant="caption" sx={{ color: "#3fb950" }}>Yes {fmtPercent(yesPrice)}</Typography>
-            <Typography variant="caption" sx={{ color: "#f85149" }}>No {fmtPercent(noPrice)}</Typography>
+            <Typography variant="caption" sx={{ color: "#3fb950" }}>{t("event.yes")} {fmtPercent(yesPrice)}</Typography>
+            <Typography variant="caption" sx={{ color: "#f85149" }}>{t("event.no")} {fmtPercent(noPrice)}</Typography>
           </Box>
           <Box sx={{ display: "flex", borderRadius: 1, overflow: "hidden", height: 8, bgcolor: "#21262d" }}>
             <Box sx={{ width: `${yesPct}%`, bgcolor: "#3fb950", transition: "width 0.3s" }} />
@@ -66,10 +68,10 @@ export default function EventCard({ event }: Props) {
         {/* Footer */}
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Typography variant="caption" sx={{ color: "#8b949e" }}>
-            Vol: {fmtVolume(event.volume)}
+            {t("event.vol")} {fmtVolume(event.volume)}
           </Typography>
           {closed && (
-            <Chip label="CLOSED" size="small" sx={{ color: "#8b949e", borderColor: "#30363d", height: 20 }} />
+            <Chip label={t("event.closed")} size="small" sx={{ color: "#8b949e", borderColor: "#30363d", height: 20 }} />
           )}
         </Box>
       </CardContent>

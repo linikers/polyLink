@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   Box,
   Container,
@@ -13,10 +13,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Divider,
-  AppBar,
-  Toolbar,
-  Chip,
+  Badge,
 } from "@mui/material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
@@ -25,6 +22,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import ShowChartIcon from "@mui/icons-material/ShowChart";
 import Link from "next/link";
 import { useLang } from "@/lib/lang";
+import AlertCenter from "./AlertCenter";
 
 const tabs = [
   { id: "dashboard", labelKey: "admin.dashboard", icon: <DashboardIcon /> },
@@ -41,44 +39,55 @@ interface Props {
 export default function AdminLayout({ activeTab = "dashboard", children }: Props) {
   const { t } = useLang();
   const [tab, setTab] = useState(activeTab);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const handleUnreadChange = useCallback((count: number) => {
+    setUnreadCount(count);
+  }, []);
+
+  const alertContent = (
+    <AlertCenter onUnreadChange={handleUnreadChange} />
+  );
 
   const content = children || (
-    <Grid2 container spacing={3}>
-      {/* Stats cards */}
-      {[
-        { label: t("admin.favoritesCount"), value: "0", color: "#7c3aed" },
-        { label: t("admin.alertsCount"), value: "0", color: "#3fb950" },
-        { label: t("admin.watchingCount"), value: "0", color: "#f0883e" },
-      ].map((stat) => (
-        <Grid2 key={stat.label} size={{ xs: 12, sm: 4 }}>
+    tab === "alerts" ? alertContent : (
+      <Grid2 container spacing={3}>
+        {/* Stats cards */}
+        {[
+          { label: t("admin.favoritesCount"), value: "0", color: "#7c3aed" },
+          { label: t("admin.alertsCount"), value: String(unreadCount), color: "#3fb950" },
+          { label: t("admin.watchingCount"), value: "0", color: "#f0883e" },
+        ].map((stat) => (
+          <Grid2 key={stat.label} size={{ xs: 12, sm: 4 }}>
+            <Card sx={{ bgcolor: "#161b22", border: "1px solid #30363d", borderRadius: 2 }}>
+              <CardContent>
+                <Typography variant="h3" sx={{ fontWeight: 700, color: stat.color, mb: 1 }}>
+                  {stat.value}
+                </Typography>
+                <Typography variant="body2" sx={{ color: "#8b949e" }}>
+                  {stat.label}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid2>
+        ))}
+
+        {/* Placeholder */}
+        <Grid2 size={12}>
           <Card sx={{ bgcolor: "#161b22", border: "1px solid #30363d", borderRadius: 2 }}>
-            <CardContent>
-              <Typography variant="h3" sx={{ fontWeight: 700, color: stat.color, mb: 1 }}>
-                {stat.value}
+            <CardContent sx={{ textAlign: "center", py: 6 }}>
+              <ShowChartIcon sx={{ fontSize: 48, color: "#30363d", mb: 2 }} />
+              <Typography variant="h6" sx={{ color: "#8b949e", mb: 1 }}>
+                {t("admin.placeholder")}
               </Typography>
-              <Typography variant="body2" sx={{ color: "#8b949e" }}>
-                {stat.label}
+              <Typography variant="body2" sx={{ color: "#484f58" }}>
+                {t("admin.placeholderDesc")}
               </Typography>
             </CardContent>
           </Card>
         </Grid2>
-      ))}
-
-      {/* Placeholder */}
-      <Grid2 size={12}>
-        <Card sx={{ bgcolor: "#161b22", border: "1px solid #30363d", borderRadius: 2 }}>
-          <CardContent sx={{ textAlign: "center", py: 6 }}>
-            <ShowChartIcon sx={{ fontSize: 48, color: "#30363d", mb: 2 }} />
-            <Typography variant="h6" sx={{ color: "#8b949e", mb: 1 }}>
-              {t("admin.placeholder")}
-            </Typography>
-            <Typography variant="body2" sx={{ color: "#484f58" }}>
-              {t("admin.placeholderDesc")}
-            </Typography>
-          </CardContent>
-        </Card>
       </Grid2>
-    </Grid2>
+    )
   );
 
   return (
@@ -111,7 +120,13 @@ export default function AdminLayout({ activeTab = "dashboard", children }: Props
               }}
             >
               <ListItemIcon sx={{ color: "#8b949e", minWidth: 40 }}>
-                {item.icon}
+                {item.id === "alerts" ? (
+                  <Badge badgeContent={unreadCount} color="error" slotProps={{ badge: { sx: { fontSize: 10, height: 16, minWidth: 16 } } }}>
+                    {item.icon}
+                  </Badge>
+                ) : (
+                  item.icon
+                )}
               </ListItemIcon>
               <ListItemText
                 primary={t(item.labelKey)}

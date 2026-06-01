@@ -18,6 +18,7 @@ import { fmtVolume, fmtPercent, parseMarket } from "@/lib/api";
 import OrderBook from "@/components/OrderBook";
 import PriceChart from "@/components/PriceHistoryChart";
 import RecentTrades from "@/components/RecentTrades";
+import EdgeScore from "@/components/EdgeScore";
 import { useLang } from "@/lib/lang";
 
 interface Props {
@@ -127,6 +128,13 @@ export default function MarketDetail({ event }: Props) {
           </Card>
         </Grid2>
       </Grid2>
+
+      {/* Edge Score */}
+      {!closed && (
+        <Box sx={{ mb: 4, maxWidth: 560 }}>
+          <EdgeScore marketPrice={yesPrice} />
+        </Box>
+      )}
 
       {/* Price Chart */}
       {conditionId && !closed && (

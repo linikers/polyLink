@@ -43,6 +43,18 @@ const translations: Record<Lang, Record<string, string>> = {
     "detail.trades": "Negociações Recentes",
     "detail.closed":
       "Este mercado está encerrado. Nenhum livro de ofertas ou negociação disponível.",
+    // Edge Score
+    "edge.title": "Edge Score",
+    "edge.subtitle": "Ajuste sua estimativa de probabilidade justa",
+    "edge.marketPrice": "Mercado",
+    "edge.yourEstimate": "Sua estimativa",
+    "edge.edge": "Edge",
+    "edge.diff": "Diferença",
+    "edge.buyYes": "COMPRAR YES",
+    "edge.buyNo": "COMPRAR NO",
+    "edge.noEdge": "Sem edge significativo",
+    "edge.highEdge": "Edge Alto",
+    "edge.estimateLabel": "Probabilidade justa estimada",
     // OrderBook
     "orderbook.price": "Preço",
     "orderbook.size": "Tam.",
@@ -95,6 +107,18 @@ const translations: Record<Lang, Record<string, string>> = {
     "detail.trades": "Recent Trades",
     "detail.closed":
       "This market is closed. No live orderbook or trades available.",
+    // Edge Score
+    "edge.title": "Edge Score",
+    "edge.subtitle": "Adjust your fair probability estimate",
+    "edge.marketPrice": "Market",
+    "edge.yourEstimate": "Your estimate",
+    "edge.edge": "Edge",
+    "edge.diff": "Difference",
+    "edge.buyYes": "BUY YES",
+    "edge.buyNo": "BUY NO",
+    "edge.noEdge": "No significant edge",
+    "edge.highEdge": "High Edge",
+    "edge.estimateLabel": "Estimated fair probability",
     "orderbook.price": "Price",
     "orderbook.size": "Size",
     "orderbook.last": "Last:",

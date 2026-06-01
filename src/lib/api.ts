@@ -143,3 +143,24 @@ export async function getTopMarketsForAlerts(limit = 50): Promise<AlertMarketDat
     };
   });
 }
+
+// ─── Category helpers ───────────────────────────────
+
+export const CATEGORIES = [
+  { id: "politics", labelKey: "category.politics" },
+  { id: "crypto", labelKey: "category.crypto" },
+  { id: "economics", labelKey: "category.economics" },
+  { id: "sports", labelKey: "category.sports" },
+  { id: "technology", labelKey: "category.technology" },
+] as const;
+
+export type CategoryId = (typeof CATEGORIES)[number]["id"];
+
+export async function getEventsByCategory(
+  category: CategoryId,
+  limit = 20
+): Promise<any[]> {
+  return fetchJson<any[]>(
+    `${GAMMA}/events?limit=${limit}&tag=${category}&active=true&closed=false&order=volume&ascending=false`
+  );
+}

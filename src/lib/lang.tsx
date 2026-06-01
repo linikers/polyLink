@@ -76,6 +76,13 @@ const translations: Record<Lang, Record<string, string>> = {
     "admin.watchingCount": "Observando",
     "admin.placeholder": "Comece a explorar mercados",
     "admin.placeholderDesc": "Salve mercados como favoritos, crie alertas de preço e gerencie suas preferências aqui.",
+    // Categories
+    "category.all": "Todos",
+    "category.politics": "Política",
+    "category.crypto": "Crypto",
+    "category.economics": "Economia",
+    "category.sports": "Esportes",
+    "category.technology": "Tecnologia",
   },
   en: {
     "brand.subtitle": "Polymarket Dashboard",
@@ -138,6 +145,13 @@ const translations: Record<Lang, Record<string, string>> = {
     "admin.watchingCount": "Watching",
     "admin.placeholder": "Start exploring markets",
     "admin.placeholderDesc": "Save markets as favorites, set price alerts, and manage your preferences here.",
+    // Categories
+    "category.all": "All",
+    "category.politics": "Politics",
+    "category.crypto": "Crypto",
+    "category.economics": "Economics",
+    "category.sports": "Sports",
+    "category.technology": "Technology",
   },
 };
 

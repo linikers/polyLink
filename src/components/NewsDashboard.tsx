@@ -53,6 +53,8 @@ export default function NewsDashboard() {
       }
     }
     load();
+    const interval = setInterval(load, 600000); // 10 min auto
+    return () => { cancelled = true; clearInterval(interval); };
   }, [filter]);
 
   const handleRefresh = () => {

@@ -17,12 +17,14 @@ import {
   Button,
   Divider,
   Badge,
+  Tooltip,
 } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import NotificationsOffIcon from "@mui/icons-material/NotificationsOff";
 import CircleIcon from "@mui/icons-material/Circle";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import {
   type AlertRule,
   type AlertEvent,
@@ -130,6 +132,16 @@ export default function AlertCenter({ onUnreadChange }: Props) {
     }
   };
 
+  const typeDesc = (type: string): string => {
+    switch (type) {
+      case "whale": return "Monitora grandes movimentações — dispara quando uma wallet compra acima do threshold definido.";
+      case "volume": return "Detecta picos de volume — dispara quando o volume de um mercado aumenta acima do threshold percentual.";
+      case "odds": return "Acompanha mudanças de probabilidade — dispara quando o preço YES varia mais que o threshold percentual.";
+      case "opportunity": return "Encontra mercados mal precificados — dispara quando o Edge Score estimado está acima do threshold.";
+      default: return "";
+    }
+  };
+
   return (
     <Box>
       {/* Engine toggle */}
@@ -202,6 +214,11 @@ export default function AlertCenter({ onUnreadChange }: Props) {
                   <Typography variant="body2" sx={{ fontWeight: 600, color: "#e6edf3", flex: 1 }}>
                     {rule.label}
                   </Typography>
+                  <Tooltip title={typeDesc(rule.type)} arrow placement="top">
+                    <IconButton size="small" sx={{ color: "#484f58", "&:hover": { color: "#8b949e" } }}>
+                      <InfoOutlinedIcon sx={{ fontSize: 16 }} />
+                    </IconButton>
+                  </Tooltip>
                   <Switch
                     checked={rule.enabled}
                     onChange={() => toggleRule(rule.id)}

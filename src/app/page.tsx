@@ -1,29 +1,55 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Container, Typography, Box, Chip, Grid2 } from "@mui/material";
+import { useState, useEffect, useCallback } from "react";
+import { Container, Typography, Box, Chip, Grid2, Button, CircularProgress } from "@mui/material";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import SearchMarkets from "@/components/SearchMarkets";
 import EventCard from "@/components/EventCard";
 import { getTrendingEvents, getEventsByCategory, CATEGORIES, type CategoryId } from "@/lib/api";
 import { useLang } from "@/lib/lang";
 
+const PAGE_SIZE = 12;
+
 export default function HomePage() {
   const { t } = useLang();
   const [category, setCategory] = useState<CategoryId | null>(null);
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [offset, setOffset] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
 
+  const fetchEvents = useCallback(async (cat: CategoryId | null, off: number, append: boolean) => {
+    if (append) setLoadingMore(true); else setLoading(true);
+    try {
+      const data = cat
+        ? await getEventsByCategory(cat, PAGE_SIZE, off)
+        : await getTrendingEvents(PAGE_SIZE, off);
+      if (append) {
+        setEvents((prev) => [...prev, ...data]);
+      } else {
+        setEvents(data);
+      }
+      setHasMore(data.length === PAGE_SIZE);
+    } catch {
+      if (!append) setEvents([]);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  }, []);
+
+  // Reset on category change
   useEffect(() => {
-    setLoading(true);
-    const fetchEvents = category
-      ? getEventsByCategory(category, 20)
-      : getTrendingEvents(12);
-    fetchEvents
-      .then(setEvents)
-      .catch(() => setEvents([]))
-      .finally(() => setLoading(false));
-  }, [category]);
+    setOffset(0);
+    fetchEvents(category, 0, false);
+  }, [category, fetchEvents]);
+
+  const loadMore = () => {
+    const newOffset = offset + PAGE_SIZE;
+    setOffset(newOffset);
+    fetchEvents(category, newOffset, true);
+  };
 
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
@@ -95,6 +121,7 @@ export default function HomePage() {
           </Typography>
         </Box>
       ) : (
+        <>
         <Grid2 container spacing={2}>
           {events.filter(Boolean).map((evt: any) => (
             <Grid2 key={evt?.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
@@ -102,6 +129,26 @@ export default function HomePage() {
             </Grid2>
           ))}
         </Grid2>
+        {hasMore && (
+          <Box sx={{ textAlign: "center", mt: 4 }}>
+            <Button
+              variant="outlined"
+              onClick={loadMore}
+              disabled={loadingMore}
+              startIcon={loadingMore ? <CircularProgress size={16} /> : null}
+              sx={{
+                color: "#8b949e",
+                borderColor: "#30363d",
+                textTransform: "none",
+                px: 4,
+                "&:hover": { borderColor: "#7c3aed", color: "#e6edf3" },
+              }}
+            >
+              {loadingMore ? "Carregando..." : "Carregar mais"}
+            </Button>
+          </Box>
+        )}
+        </>
       )}
     </Container>
   );

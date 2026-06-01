@@ -31,9 +31,9 @@ export async function searchMarkets(query: string) {
   return data;
 }
 
-export async function getTrendingEvents(limit = 10) {
+export async function getTrendingEvents(limit = 10, offset = 0) {
   const events = await fetchJson<any[]>(
-    `${GAMMA}/events?limit=${limit}&active=true&closed=false&order=volume&ascending=false`
+    `${GAMMA}/events?limit=${limit}&offset=${offset}&active=true&closed=false&order=volume&ascending=false`
   );
   return events;
 }
@@ -168,9 +168,10 @@ export type CategoryId = (typeof CATEGORIES)[number]["id"];
 
 export async function getEventsByCategory(
   category: CategoryId,
-  limit = 20
+  limit = 20,
+  offset = 0
 ): Promise<any[]> {
   return fetchJson<any[]>(
-    `${GAMMA}/events?limit=${limit}&tag=${category}&active=true&closed=false&order=volume&ascending=false`
+    `${GAMMA}/events?limit=${limit}&offset=${offset}&tag=${category}&active=true&closed=false&order=volume&ascending=false`
   );
 }

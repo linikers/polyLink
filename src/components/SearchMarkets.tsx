@@ -34,7 +34,7 @@ export default function SearchMarkets({ onSearch }: Props) {
     setError(null);
     try {
       const data = await searchMarkets(q.trim());
-      setResults(data.events ?? []);
+      setResults(Array.isArray(data.events) ? data.events : []);
       onSearch?.(q);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erro ao buscar");

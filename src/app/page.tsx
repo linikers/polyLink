@@ -25,12 +25,13 @@ export default function HomePage() {
       const data = cat
         ? await getEventsByCategory(cat, PAGE_SIZE, off)
         : await getTrendingEvents(PAGE_SIZE, off);
+      const arr = Array.isArray(data) ? data : [];
       if (append) {
-        setEvents((prev) => [...prev, ...data]);
+        setEvents((prev) => [...prev, ...arr]);
       } else {
-        setEvents(data);
+        setEvents(arr);
       }
-      setHasMore(data.length === PAGE_SIZE);
+      setHasMore(arr.length === PAGE_SIZE);
     } catch {
       if (!append) setEvents([]);
     } finally {
@@ -114,7 +115,7 @@ export default function HomePage() {
         <Box sx={{ textAlign: "center", py: 6, color: "#484f58" }}>
           <Typography variant="body2">Carregando...</Typography>
         </Box>
-      ) : events.length === 0 ? (
+      ) : !Array.isArray(events) || events.length === 0 ? (
         <Box sx={{ textAlign: "center", py: 6 }}>
           <Typography variant="body2" sx={{ color: "#8b949e" }}>
             {t("trending.empty")}

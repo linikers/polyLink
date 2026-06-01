@@ -89,6 +89,16 @@ export async function getRecentTrades(limit = 20, conditionId?: string) {
   return fetchJson<any[]>(url);
 }
 
+// ─── Price history with multiple intervals ──────────
+
+export const PRICE_INTERVALS = [
+  { id: "7d", label: "7d", fidelity: 50 },
+  { id: "1m", label: "1m", fidelity: 100 },
+  { id: "all", label: "Max", fidelity: 200 },
+] as const;
+
+export type PriceInterval = (typeof PRICE_INTERVALS)[number]["id"];
+
 // ─── Helpers ──────────────────────────────────────────
 
 export function parseMarket(market: any) {

@@ -123,6 +123,14 @@ export default function MarketDetail({ event }: Props) {
                     {event.markets?.length ?? 0}
                   </Typography>
                 </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ color: "#8b949e" }}>{t("detail.endDate")}</Typography>
+                  <Typography variant="body2" sx={{ color: "#e6edf3", fontWeight: 600 }}>
+                    {event.endDate
+                      ? new Date(event.endDate).toLocaleDateString("pt-BR")
+                      : "—"}
+                  </Typography>
+                </Box>
               </Box>
             </CardContent>
           </Card>

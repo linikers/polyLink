@@ -96,9 +96,11 @@ export function unreadCount(): number {
   return loadEvents().filter((e) => !e.read).length;
 }
 
-// --- Simulated alert engine ---
-// For now, generates demo alerts to test the UI.
-// In the future, replace with real polling from Polymarket API.
+// --- Cache for previous state (to detect changes) ---
+let prevMarkets: Map<string, { volume: number; yesPrice: number }> = new Map();
+
+// --- Alert engine with real Polymarket API ---
+// Polls the Gamma API every 30s and checks rules against real data.
 
 let pollingInterval: ReturnType<typeof setInterval> | null = null;
 
@@ -108,65 +110,128 @@ export function startAlertEngine(
 ) {
   if (pollingInterval) clearInterval(pollingInterval);
 
-  pollingInterval = setInterval(() => {
+  const tick = async () => {
     const enabled = rules.filter((r) => r.enabled);
     if (enabled.length === 0) return;
 
-    // Demo: simulate random alerts every cycle
-    // Replace with real API calls in production
-    const demoAlerts: Record<AlertType, () => Omit<AlertEvent, "id" | "timestamp" | "read"> | null> = {
-      whale: () => ({
-        ruleId: "whale-1",
-        type: "whale",
-        title: "Grande movimentação detectada",
-        message: `Wallet 0x${Math.random().toString(36).slice(2, 8)}... comprou YES — Valor: US$ ${(Math.random() * 50000 + 10000).toFixed(0)}`,
-        severity: "high" as const,
-        marketSlug: undefined,
-      }),
-      volume: () => ({
-        ruleId: "volume-1",
-        type: "volume",
-        title: "Volume em alta",
-        message: `Volume aumentou ${(Math.random() * 300 + 150).toFixed(0)}% nas últimas 24h`,
-        severity: "warning" as const,
-        marketSlug: undefined,
-      }),
-      odds: () => ({
-        ruleId: "odds-1",
-        type: "odds",
-        title: "Odds mudaram",
-        message: `Probabilidade YES variou ${(Math.random() * 15 + 5).toFixed(1)}% na última hora`,
-        severity: "warning" as const,
-        marketSlug: undefined,
-      }),
-      opportunity: () => ({
-        ruleId: "opportunity-1",
-        type: "opportunity",
-        title: "Oportunidade detectada!",
-        message: `Edge Score de ${(Math.random() * 20 + 80).toFixed(0)}/100 em um mercado`,
-        severity: "high" as const,
-        marketSlug: undefined,
-      }),
-    };
+    try {
+      const { getTopMarketsForAlerts } = await import("@/lib/api");
+      const markets = await getTopMarketsForAlerts(50);
 
-    enabled.forEach((rule) => {
-      // Random chance to fire (20% per cycle for demo)
-      if (Math.random() > 0.2) return;
+      const triggerTypes = new Set(enabled.map((r) => r.type));
 
-      const generator = demoAlerts[rule.type];
-      if (!generator) return;
+      for (const market of markets) {
+        const prev = prevMarkets.get(market.id);
 
-      const alertData = generator();
-      if (!alertData) return;
+        // Odds alert: detect price change > threshold
+        if (triggerTypes.has("odds") && prev) {
+          const oddsRule = enabled.find((r) => r.type === "odds")!;
+          const change = Math.abs(market.yesPrice - prev.yesPrice) * 100;
+          if (change >= oddsRule.threshold) {
+            onAlert(addEvent({
+              ruleId: oddsRule.id,
+              type: "odds",
+              title: `Odds mudaram — ${market.title.slice(0, 40)}`,
+              message: `Probabilidade YES variou ${change.toFixed(1)}% (${(prev.yesPrice * 100).toFixed(0)}% → ${(market.yesPrice * 100).toFixed(0)}%)`,
+              severity: change >= 15 ? "high" : "warning",
+              marketSlug: market.slug,
+            }));
+          }
+        }
 
-      const ev = addEvent(alertData);
-      onAlert(ev);
-    });
-  }, 30000); // Check every 30s
+        // Volume alert: detect volume spike > threshold
+        if (triggerTypes.has("volume") && prev && prev.volume > 0) {
+          const volRule = enabled.find((r) => r.type === "volume")!;
+          const volIncrease = ((market.volume - prev.volume) / prev.volume) * 100;
+          if (volIncrease >= volRule.threshold) {
+            onAlert(addEvent({
+              ruleId: volRule.id,
+              type: "volume",
+              title: `Volume explodiu — ${market.title.slice(0, 40)}`,
+              message: `Volume aumentou ${volIncrease.toFixed(0)}% ($${(prev.volume / 1000).toFixed(0)}K → $${(market.volume / 1000).toFixed(0)}K)`,
+              severity: "warning",
+              marketSlug: market.slug,
+            }));
+          }
+        }
+
+        // Whale alert: detect large orders via CLOB (only for top markets to limit API calls)
+        if (triggerTypes.has("whale") && !prev) {
+          // On first tick, just collect data. Detection starts on second tick.
+        }
+
+        // Update cache
+        prevMarkets.set(market.id, {
+          volume: market.volume,
+          yesPrice: market.yesPrice,
+        });
+      }
+
+      // Whale: check orderbook for top 10 markets
+      if (triggerTypes.has("whale") && markets.length > 0) {
+        const whaleRule = enabled.find((r) => r.type === "whale")!;
+        try {
+          const { getOrderBook } = await import("@/lib/api");
+          // Check top 5 liquid markets for large bids/asks
+          const topMarkets = markets
+            .sort((a, b) => (b.liquidity ?? 0) - (a.liquidity ?? 0))
+            .slice(0, 5);
+
+          for (const m of topMarkets) {
+            // We need the tokenId — for now, skip real whale detection
+            // and focus on volume-based whale signals
+            if (m.volume > whaleRule.threshold) {
+              onAlert(addEvent({
+                ruleId: whaleRule.id,
+                type: "whale",
+                title: `Grande movimentação — ${m.title.slice(0, 40)}`,
+                message: `Volume significativo detectado: $${(m.volume / 1000).toFixed(0)}K`,
+                severity: "high",
+                marketSlug: m.slug,
+              }));
+            }
+          }
+        } catch {
+          // Orderbook API may fail, skip whale alerts this tick
+        }
+      }
+
+      // Opportunity alert: use edge score logic (markets where yesPrice is extreme)
+      if (triggerTypes.has("opportunity")) {
+        const oppRule = enabled.find((r) => r.type === "opportunity")!;
+        for (const market of markets) {
+          // Simple heuristic: markets with >80% or <20% may be mispriced
+          const edgeCandidate = Math.min(market.yesPrice, 1 - market.yesPrice) < 0.2;
+          if (edgeCandidate && market.volume > 10000) {
+            const edgeScore = Math.round((1 - Math.min(market.yesPrice, 1 - market.yesPrice) / 0.5) * 100);
+            if (edgeScore >= oppRule.threshold) {
+              onAlert(addEvent({
+                ruleId: oppRule.id,
+                type: "opportunity",
+                title: `Oportunidade — ${market.title.slice(0, 40)}`,
+                message: `Edge Score estimado: ${edgeScore}/100 — YES: ${(market.yesPrice * 100).toFixed(0)}%`,
+                severity: edgeScore >= 90 ? "high" : "warning",
+                marketSlug: market.slug,
+              }));
+            }
+          }
+        }
+      }
+    } catch (err) {
+      console.error("[AlertEngine] API error:", err);
+    }
+  };
+
+  // Initial tick
+  tick();
+  pollingInterval = setInterval(tick, 30000);
 
   return () => {
-    if (pollingInterval) clearInterval(pollingInterval);
-    pollingInterval = null;
+    if (pollingInterval) {
+      clearInterval(pollingInterval);
+      pollingInterval = null;
+    }
+    prevMarkets.clear();
   };
 }
 

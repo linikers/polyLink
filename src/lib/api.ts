@@ -108,3 +108,38 @@ export function fmtVolume(vol: number | string): string {
   if (v >= 1_000) return `$${(v / 1_000).toFixed(1)}K`;
   return `$${v.toFixed(0)}`;
 }
+
+// ─── Real-time data for alerts ───────────────────────
+
+export interface AlertMarketData {
+  id: string;
+  slug: string;
+  title: string;
+  category?: string;
+  volume: number;
+  liquidity?: number;
+  yesPrice: number;
+  noPrice: number;
+  change24h?: number;
+}
+
+export async function getTopMarketsForAlerts(limit = 50): Promise<AlertMarketData[]> {
+  const events = await fetchJson<any[]>(
+    `${GAMMA}/events?limit=${limit}&active=true&closed=false&order=volume&ascending=false`
+  );
+  return events.map((evt: any) => {
+    const market = evt.markets?.[0];
+    const p = market ? parseMarket(market) : null;
+    return {
+      id: evt.id,
+      slug: evt.slug,
+      title: evt.title,
+      category: evt.category,
+      volume: evt.volume ? Number(evt.volume) : 0,
+      liquidity: evt.liquidity ? Number(evt.liquidity) : 0,
+      yesPrice: p ? Number(p.outcomePricesParsed[0] ?? 0) : 0,
+      noPrice: p ? Number(p.outcomePricesParsed[1] ?? 0) : 0,
+      change24h: evt.priceChange24h ? Number(evt.priceChange24h) : undefined,
+    };
+  });
+}

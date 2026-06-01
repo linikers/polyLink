@@ -9,9 +9,11 @@ import {
   Chip,
   ToggleButton,
   ToggleButtonGroup,
+  IconButton,
 } from "@mui/material";
 import Link from "next/link";
 import ShowChartIcon from "@mui/icons-material/ShowChart";
+import SettingsIcon from "@mui/icons-material/Settings";
 import { useLang } from "@/lib/lang";
 
 export default function Navbar() {
@@ -33,6 +35,18 @@ export default function Navbar() {
           </Typography>
           <Chip label={t("brand.subtitle")} size="small" variant="outlined" sx={{ color: "#8b949e", borderColor: "#30363d" }} />
           <Box sx={{ flexGrow: 1 }} />
+
+          {/* Admin link */}
+          <IconButton
+            component={Link}
+            href="/admin"
+            sx={{ color: "#8b949e", "&:hover": { color: "#7c3aed" } }}
+            size="small"
+          >
+            <SettingsIcon fontSize="small" />
+          </IconButton>
+
+          {/* Language toggle */}
           <ToggleButtonGroup
             value={lang}
             exclusive

@@ -99,6 +99,7 @@ const translations: Record<Lang, Record<string, string>> = {
     "intel.recYes": "📈 Comprar YES",
     "intel.recNo": "📉 Comprar NO",
     "intel.edgeLabel2": "de Edge",
+    "intel.aiEstimate": "🎯 Estimar com IA",
     // Portfolio
     "portfolio.title": "Portfolio",
     "portfolio.add": "Nova Posição",
@@ -271,6 +272,7 @@ const translations: Record<Lang, Record<string, string>> = {
     "intel.recYes": "📈 Buy YES",
     "intel.recNo": "📉 Buy NO",
     "intel.edgeLabel2": "Edge",
+    "intel.aiEstimate": "🎯 Estimate with AI",
     // Portfolio
     "portfolio.title": "Portfolio",
     "portfolio.add": "New Position",

@@ -21,6 +21,7 @@ import {
   type IntelligenceScores,
 } from "@/lib/intelligence";
 import type { GammaEvent } from "@/lib/types";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 
 interface Props {
   event: GammaEvent;
@@ -43,6 +44,44 @@ export default function IntelligenceScoreCard({
   const [estimate, setEstimate] = useState(
     edgeEstimate ?? Math.round(Number(yesPrice || "0") * 100)
   );
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+
+  // AI: fetch estimate from server API route
+  const handleAIEstimate = async () => {
+    setAiLoading(true);
+    setAiError(null);
+    try {
+      // Build market context
+      const marketCtx = {
+        title: event.title,
+        description: event.description,
+        category: event.category,
+        volume: Number(event.volume ?? 0),
+        liquidity: Number(event.liquidity ?? 0),
+        yesPrice: Number(yesPrice ?? 0) * 100,
+        noPrice: Number(noPrice ?? 0) * 100,
+        endDate: event.endDate,
+      };
+      const res = await fetch("/api/ai/estimate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(marketCtx),
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `API error ${res.status}`);
+      }
+      const data = await res.json();
+      if (data?.estimate?.probability != null) {
+        setEstimate(Math.round(data.estimate.probability));
+      }
+    } catch (e) {
+      setAiError(e instanceof Error ? e.message : "Erro ao consultar IA");
+    } finally {
+      setAiLoading(false);
+    }
+  };
 
   // Fetch recent trades to estimate whale interest in this market
   useEffect(() => {
@@ -291,6 +330,42 @@ export default function IntelligenceScoreCard({
               </Typography>
             </Box>
           )}
+        </Box>
+
+        {/* AI Estimate button */}
+        <Box sx={{ borderTop: "1px solid #30363d", pt: 2, mt: 2 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap" }}>
+            <Box
+              component="button"
+              onClick={handleAIEstimate}
+              disabled={aiLoading}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                px: 2,
+                py: 1,
+                borderRadius: 2,
+                border: "1px solid #7c3aed",
+                bgcolor: aiLoading ? "rgba(124,58,237,0.05)" : "rgba(124,58,237,0.1)",
+                color: aiLoading ? "#8b949e" : "#e6edf3",
+                cursor: aiLoading ? "default" : "pointer",
+                fontFamily: "inherit",
+                fontSize: 13,
+                transition: "all 0.2s",
+                "&:hover:not(:disabled)": { bgcolor: "rgba(124,58,237,0.2)" },
+              }}
+            >
+              <AutoAwesomeIcon sx={{ fontSize: 16, color: aiLoading ? "#484f58" : "#7c3aed" }} />
+              {aiLoading ? "Estimando..." : t("intel.aiEstimate")}
+              {aiLoading && <CircularProgress size={12} sx={{ color: "#7c3aed" }} />}
+            </Box>
+            {aiError && (
+              <Typography variant="caption" sx={{ color: "#f85149", fontSize: 11 }}>
+                {aiError}
+              </Typography>
+            )}
+          </Box>
         </Box>
       </CardContent>
     </Card>

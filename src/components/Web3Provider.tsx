@@ -11,6 +11,7 @@ interface Web3State {
   balance: string; // formatted USDC
   connect: () => Promise<void>;
   disconnect: () => void;
+  switchChain: () => Promise<void>;
 }
 
 const Web3Ctx = createContext<Web3State>({
@@ -20,6 +21,7 @@ const Web3Ctx = createContext<Web3State>({
   balance: "0",
   connect: async () => {},
   disconnect: () => {},
+  switchChain: async () => {},
 });
 
 export function useWeb3() {
@@ -120,6 +122,38 @@ export function Web3Provider({ children }: { children: ReactNode }) {
     setIsCorrectChain(false);
   }, []);
 
+  const switchChain = useCallback(async () => {
+    if (typeof window === "undefined" || !(window as any).ethereum) return;
+    try {
+      await (window as any).ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: "0x89" }], // Polygon = 137 = 0x89
+      });
+      setIsCorrectChain(true);
+      if (address) await fetchBalance(address);
+    } catch (e: any) {
+      // If Polygon not added yet, add it
+      if (e?.code === 4902) {
+        try {
+          await (window as any).ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [{
+              chainId: "0x89",
+              chainName: "Polygon Mainnet",
+              nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
+              rpcUrls: ["https://polygon-rpc.com/"],
+              blockExplorerUrls: ["https://polygonscan.com/"],
+            }],
+          });
+          setIsCorrectChain(true);
+          if (address) await fetchBalance(address);
+        } catch {
+          // user rejected
+        }
+      }
+    }
+  }, [address, fetchBalance]);
+
   return (
     <Web3Ctx.Provider
       value={{
@@ -129,6 +163,7 @@ export function Web3Provider({ children }: { children: ReactNode }) {
         balance,
         connect,
         disconnect,
+        switchChain,
       }}
     >
       {children}

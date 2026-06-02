@@ -8,7 +8,7 @@ import { useLang } from "@/lib/lang";
 
 export default function WalletButton() {
   const { t } = useLang();
-  const { address, isConnected, isCorrectChain, balance, connect, disconnect } = useWeb3();
+  const { address, isConnected, isCorrectChain, balance, connect, disconnect, switchChain } = useWeb3();
   const [connecting, setConnecting] = useState(false);
 
   const handleConnect = async () => {
@@ -25,9 +25,10 @@ export default function WalletButton() {
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         {!isCorrectChain && (
           <Chip
-            label="Rede errada"
+            label="Mudar pra Polygon"
             size="small"
-            sx={{ height: 20, fontSize: 10, bgcolor: "rgba(248,81,73,0.15)", color: "#f85149" }}
+            onClick={switchChain}
+            sx={{ height: 20, fontSize: 10, bgcolor: "rgba(248,81,73,0.15)", color: "#f85149", cursor: "pointer", "&:hover": { bgcolor: "rgba(248,81,73,0.25)" } }}
           />
         )}
         <Chip

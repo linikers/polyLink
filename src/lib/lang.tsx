@@ -100,6 +100,8 @@ const translations: Record<Lang, Record<string, string>> = {
     "intel.recNo": "📉 Comprar NO",
     "intel.edgeLabel2": "de Edge",
     "intel.aiEstimate": "🎯 Estimar com IA",
+    // Wallet
+    "wallet.connect": "Conectar MetaMask",
     // Portfolio
     "portfolio.title": "Portfolio",
     "portfolio.add": "Nova Posição",
@@ -273,6 +275,8 @@ const translations: Record<Lang, Record<string, string>> = {
     "intel.recNo": "📉 Buy NO",
     "intel.edgeLabel2": "Edge",
     "intel.aiEstimate": "🎯 Estimate with AI",
+    // Wallet
+    "wallet.connect": "Connect MetaMask",
     // Portfolio
     "portfolio.title": "Portfolio",
     "portfolio.add": "New Position",

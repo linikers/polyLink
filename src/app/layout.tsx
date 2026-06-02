@@ -7,6 +7,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { theme } from "./theme";
 import { LangProvider } from "@/lib/lang";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { Web3Provider } from "@/components/Web3Provider";
 
 export const metadata: Metadata = {
   title: "polyLink — Dashboard Polymarket",
@@ -26,10 +27,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ThemeProvider theme={theme}>
             <CssBaseline />
             <LangProvider>
-              <ErrorBoundary>
-                <Navbar />
-                {children}
-              </ErrorBoundary>
+              <Web3Provider>
+                <ErrorBoundary>
+                  <Navbar />
+                  {children}
+                </ErrorBoundary>
+              </Web3Provider>
             </LangProvider>
           </ThemeProvider>
         </AppRouterCacheProvider>

@@ -15,6 +15,7 @@ import Link from "next/link";
 import ShowChartIcon from "@mui/icons-material/ShowChart";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { useLang } from "@/lib/lang";
+import WalletButton from "./WalletButton";
 
 export default function Navbar() {
   const { lang, setLang, t } = useLang();
@@ -35,6 +36,9 @@ export default function Navbar() {
           </Typography>
           <Chip label={t("brand.subtitle")} size="small" variant="outlined" sx={{ color: "#8b949e", borderColor: "#30363d" }} />
           <Box sx={{ flexGrow: 1 }} />
+
+          {/* Wallet */}
+          <WalletButton />
 
           {/* Admin link */}
           <IconButton

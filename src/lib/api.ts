@@ -176,6 +176,34 @@ export async function getTopMarketsForAlerts(limit = 50): Promise<AlertMarketDat
   });
 }
 
+// ─── Ending Soon / Sort helpers ──────────────────────
+
+export async function getEventsEndingSoon(
+  limit = 20,
+  offset = 0,
+  maxDays = 7
+): Promise<any[]> {
+  const now = new Date();
+  const future = new Date(now.getTime() + maxDays * 24 * 60 * 60 * 1000);
+  return fetchJson<any[]>(
+    `${GAMMA}/events?limit=${limit}&offset=${offset}&active=true&closed=false` +
+    `&order=endDate&ascending=true` +
+    `&endDate_lt=${future.toISOString()}`
+  );
+}
+
+export async function getEventsSortedBy(
+  sort: "volume" | "endDate",
+  limit = 20,
+  offset = 0,
+  category?: CategoryId
+): Promise<any[]> {
+  const ascending = sort === "endDate";
+  let url = `${GAMMA}/events?limit=${limit}&offset=${offset}&active=true&closed=false&order=${sort}&ascending=${ascending}`;
+  if (category) url += `&tag=${category}`;
+  return fetchJson<any[]>(url);
+}
+
 // ─── Category helpers ───────────────────────────────
 
 export const CATEGORIES = [
@@ -184,6 +212,7 @@ export const CATEGORIES = [
   { id: "economics", labelKey: "category.economics" },
   { id: "sports", labelKey: "category.sports" },
   { id: "technology", labelKey: "category.technology" },
+  { id: "weather", labelKey: "category.weather" },
 ] as const;
 
 export type CategoryId = (typeof CATEGORIES)[number]["id"];

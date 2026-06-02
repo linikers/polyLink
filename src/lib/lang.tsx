@@ -189,6 +189,15 @@ const translations: Record<Lang, Record<string, string>> = {
     "category.economics": "Economia",
     "category.sports": "Esportes",
     "category.technology": "Tecnologia",
+    "category.weather": "Clima",
+    // Ending Soon
+    "sort.endingSoon": "⚡ Mercados Rápidos",
+    "sort.ending24h": "24h",
+    "sort.ending7d": "7 dias",
+    "sort.ending30d": "30 dias",
+    "sort.sortBy": "Ordenar",
+    "sort.volume": "🔥 Volume",
+    "sort.endDate": "⏰ Encerramento",
   },
   en: {
     "brand.subtitle": "Polymarket Dashboard",
@@ -364,6 +373,15 @@ const translations: Record<Lang, Record<string, string>> = {
     "category.economics": "Economics",
     "category.sports": "Sports",
     "category.technology": "Technology",
+    "category.weather": "Weather",
+    // Ending Soon
+    "sort.endingSoon": "⚡ Ending Soon",
+    "sort.ending24h": "24h",
+    "sort.ending7d": "7 days",
+    "sort.ending30d": "30 days",
+    "sort.sortBy": "Sort",
+    "sort.volume": "🔥 Volume",
+    "sort.endDate": "⏰ End Date",
   },
 };
 

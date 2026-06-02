@@ -34,9 +34,7 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({
         model,
         messages: [
-          { role: "system", content: `You are a prediction market analyst. Your job is to estimate the fair probability of an event resolving to "Yes".
-
-Analyze the market data and use your knowledge of the topic to make an unbiased estimate.
+          { role: "system", content: `You are a prediction market analyst. Estimate the fair probability of an event resolving to "Yes".
 
 Rules:
 1. Return ONLY valid JSON — no markdown, no extra text
@@ -46,11 +44,12 @@ Rules:
 5. Consider: market description, volume, liquidity, category, current price
 6. Be contrarian when the crowd is clearly wrong, but don't be contrarian for its own sake
 7. Markets near 50% should have lower confidence (genuinely uncertain)
-8. Markets near 0% or 100% can have higher confidence if the evidence is clear` },
+8. Markets near 0% or 100% can have higher confidence if the evidence is clear
+9. Output the JSON as the LAST thing in your response — after any analysis` },
           { role: "user", content: buildUserPrompt(market) },
         ],
         temperature: 0.3,
-        max_tokens: 300,
+        max_tokens: 2000,
       }),
       signal: AbortSignal.timeout(30000),
     });
@@ -66,8 +65,16 @@ Rules:
     const data = await response.json();
     // Support both standard OpenAI format (message.content) and
     // streaming/delta format used by some providers (delta.content)
+    // Also support reasoning models (deepseek-v4-flash, R1) that put
+    // the final answer in reasoning_content when content is empty
     const choice = data?.choices?.[0];
-    const text = choice?.message?.content || choice?.delta?.content;
+    let text = choice?.message?.content || choice?.delta?.content || "";
+
+    // Fallback for reasoning models: content comes empty but
+    // reasoning_content has the full response including the JSON
+    if (!text && choice?.message?.reasoning_content) {
+      text = choice.message.reasoning_content;
+    }
 
     if (!text) {
       return NextResponse.json(

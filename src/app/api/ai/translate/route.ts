@@ -35,9 +35,9 @@ ${text}`;
           { role: "user", content: prompt },
         ],
         temperature: 0.1,
-        max_tokens: 1000,
+        max_tokens: 2000,
       }),
-      signal: AbortSignal.timeout(15000),
+      signal: AbortSignal.timeout(30000),
     });
 
     if (!response.ok) {
@@ -51,8 +51,14 @@ ${text}`;
     const data = await response.json();
     // Support both standard OpenAI format (message.content) and
     // streaming/delta format used by some providers (delta.content)
+    // Also support reasoning models that put answer in reasoning_content
     const choice = data?.choices?.[0];
-    const translated = (choice?.message?.content || choice?.delta?.content || "").trim();
+    let translated = (choice?.message?.content || choice?.delta?.content || "").trim();
+
+    // Fallback for reasoning models
+    if (!translated && choice?.message?.reasoning_content) {
+      translated = choice.message.reasoning_content.trim();
+    }
 
     if (!translated) {
       return NextResponse.json({ error: "Empty response from AI", detail: JSON.stringify(data).slice(0, 500) }, { status: 502 });

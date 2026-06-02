@@ -52,7 +52,7 @@ Rules:
         temperature: 0.3,
         max_tokens: 300,
       }),
-      signal: AbortSignal.timeout(15000),
+      signal: AbortSignal.timeout(30000),
     });
 
     if (!response.ok) {
@@ -64,11 +64,14 @@ Rules:
     }
 
     const data = await response.json();
-    const text = data?.choices?.[0]?.message?.content;
+    // Support both standard OpenAI format (message.content) and
+    // streaming/delta format used by some providers (delta.content)
+    const choice = data?.choices?.[0];
+    const text = choice?.message?.content || choice?.delta?.content;
 
     if (!text) {
       return NextResponse.json(
-        { error: "Empty response from AI API" },
+        { error: "Empty response from AI API", detail: JSON.stringify(data).slice(0, 500) },
         { status: 502 }
       );
     }

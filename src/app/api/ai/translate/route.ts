@@ -49,10 +49,13 @@ ${text}`;
     }
 
     const data = await response.json();
-    const translated = data?.choices?.[0]?.message?.content?.trim();
+    // Support both standard OpenAI format (message.content) and
+    // streaming/delta format used by some providers (delta.content)
+    const choice = data?.choices?.[0];
+    const translated = (choice?.message?.content || choice?.delta?.content || "").trim();
 
     if (!translated) {
-      return NextResponse.json({ error: "Empty response from AI" }, { status: 502 });
+      return NextResponse.json({ error: "Empty response from AI", detail: JSON.stringify(data).slice(0, 500) }, { status: 502 });
     }
 
     return NextResponse.json({ success: true, translated });

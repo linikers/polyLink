@@ -1,1 +1,6 @@
 /* polyLink uses MUI for styling — no Tailwind needed */
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}

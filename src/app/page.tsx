@@ -5,6 +5,7 @@ import { Container, Typography, Box, Chip, Grid2, Button, CircularProgress } fro
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import SearchMarkets from "@/components/SearchMarkets";
 import EventCard from "@/components/EventCard";
+import SkeletonCard from "@/components/SkeletonCard";
 import { getTrendingEvents, getEventsByCategory, getEventsEndingSoon, getEventsSortedBy, CATEGORIES, type CategoryId } from "@/lib/api";
 import { useLang } from "@/lib/lang";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -236,9 +237,13 @@ export default function HomePage() {
 
       {/* Events grid */}
       {loading ? (
-        <Box sx={{ textAlign: "center", py: 6, color: "#484f58" }}>
-          <Typography variant="body2">{t("common.loading")}</Typography>
-        </Box>
+        <Grid2 container spacing={2}>
+          {Array.from({ length: 8 }).map((_, i) => (
+            <Grid2 key={i} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+              <SkeletonCard />
+            </Grid2>
+          ))}
+        </Grid2>
       ) : !Array.isArray(events) ? (
         <Box sx={{ textAlign: "center", py: 6 }}>
           <Typography variant="body2" sx={{ color: "#8b949e" }}>
@@ -246,9 +251,17 @@ export default function HomePage() {
           </Typography>
         </Box>
       ) : events.length === 0 ? (
-        <Box sx={{ textAlign: "center", py: 6 }}>
-          <Typography variant="body2" sx={{ color: "#8b949e" }}>
+        <Box sx={{ textAlign: "center", py: 8 }}>
+          <Typography variant="h4" sx={{ color: "#30363d", fontWeight: 300, mb: 1, fontSize: 48 }}>
+            {tab === "endingSoon" ? "⏰" : "🔍"}
+          </Typography>
+          <Typography variant="body1" sx={{ color: "#8b949e", mb: 0.5 }}>
             {t("common.noMarkets")}
+          </Typography>
+          <Typography variant="body2" sx={{ color: "#484f58" }}>
+            {tab === "endingSoon"
+              ? "Nenhum mercado encerrando nesse período. Tente aumentar o intervalo ou mudar a aba."
+              : "Tente mudar o filtro ou buscar por outro termo."}
           </Typography>
         </Box>
       ) : (

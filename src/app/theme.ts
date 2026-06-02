@@ -11,7 +11,7 @@ export const theme = createTheme({
     text: { primary: "#e6edf3", secondary: "#8b949e" },
   },
   typography: {
-    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+    fontFamily: "var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
   },
   shape: { borderRadius: 12 },
   components: {

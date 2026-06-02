@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
@@ -9,9 +10,12 @@ import { LangProvider } from "@/lib/lang";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Web3Provider } from "@/components/Web3Provider";
 
+const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
+
 export const metadata: Metadata = {
   title: "polyLink — Dashboard Polymarket",
   description: "Acompanhe mercados de previsão, preços, orderbook e tendências do Polymarket em tempo real.",
+  icons: { icon: "/favicon.svg" },
   openGraph: {
     title: "polyLink — Dashboard Polymarket",
     description: "Acompanhe mercados de previsão em tempo real.",
@@ -21,8 +25,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR">
-      <body style={{ backgroundColor: "#0d1117", minHeight: "100vh" }}>
+    <html lang="pt-BR" className={inter.variable}>
+      <body style={{ backgroundColor: "#0d1117", minHeight: "100vh", fontFamily: "var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
             <CssBaseline />

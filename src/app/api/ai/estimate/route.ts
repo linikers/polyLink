@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
 
     // Get config from env
     const apiKey = process.env.AI_API_KEY;
-    const baseUrl = process.env.AI_API_BASE_URL || "https://api.deepseek.com";
+    const baseUrl = (process.env.AI_API_BASE_URL || "https://api.deepseek.com").replace(/\/+$/, "");
     const model = process.env.AI_MODEL || "deepseek-chat";
 
     if (!apiKey) {
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const response = await fetch(`${baseUrl}/v1/chat/completions`, {
+    const response = await fetch(`${baseUrl}${baseUrl.includes("/v1") ? "" : "/v1"}/chat/completions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -137,8 +137,8 @@ export default function MarketDetail({ event }: Props) {
         </Grid2>
       </Grid2>
 
-      {/* Intelligence Score — DESATIVADO para debug */}
-      {false && !closed && (
+      {/* Intelligence Score */}
+      {!closed && (
         <Box sx={{ mb: 4 }}>
           <IntelligenceScoreCard
             event={event}

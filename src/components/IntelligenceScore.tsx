@@ -70,7 +70,11 @@ export default function IntelligenceScoreCard({
       });
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || `API error ${res.status}`);
+        const msg = errData.error || `API error ${res.status}`;
+        // User-friendly message for known errors
+        if (msg.includes("AI_API_KEY")) throw new Error("Chave de API não configurada. Adicione AI_API_KEY no .env");
+        if (res.status === 502) throw new Error("IA temporariamente indisponível. Tente novamente.");
+        throw new Error(msg);
       }
       const data = await res.json();
       if (data?.estimate?.probability != null) {

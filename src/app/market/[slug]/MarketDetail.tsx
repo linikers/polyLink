@@ -23,6 +23,8 @@ import { useLang } from "@/lib/lang";
 import IntelligenceScoreCard from "@/components/IntelligenceScore";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import TradeDialog from "@/components/TradeDialog";
+import { translateText, getCachedTranslation } from "@/lib/translate";
+import TranslateIcon from "@mui/icons-material/Translate";
 
 interface Props {
   event: GammaEvent;
@@ -46,6 +48,9 @@ export default function MarketDetail({ event }: Props) {
   const { t } = useLang();
   const [tradeOpen, setTradeOpen] = useState(false);
   const [tradeSide, setTradeSide] = useState<"YES" | "NO">("YES");
+  const [translatedTitle, setTranslatedTitle] = useState<string | null>(getCachedTranslation(event.title));
+  const [translatedDesc, setTranslatedDesc] = useState<string | null>(event.description ? getCachedTranslation(event.description) : null);
+  const [translating, setTranslating] = useState(false);
   const market = event.markets?.[0];
   if (!market) {
     return (
@@ -63,6 +68,28 @@ export default function MarketDetail({ event }: Props) {
   const conditionId = p.conditionId;
   const closed = event.closed || market.closed;
 
+  const handleTranslate = async () => {
+    if (translating) return;
+    setTranslating(true);
+    try {
+      if (!translatedTitle && event.title) {
+        const t = await translateText(event.title);
+        setTranslatedTitle(t);
+      }
+      if (!translatedDesc && event.description) {
+        const d = await translateText(event.description);
+        setTranslatedDesc(d);
+      }
+    } catch {
+      // silent
+    } finally {
+      setTranslating(false);
+    }
+  };
+
+  const displayTitle = translatedTitle || event.title;
+  const displayDesc = translatedDesc || event.description;
+
   return (
     <>
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -79,12 +106,29 @@ export default function MarketDetail({ event }: Props) {
           </Typography>
           {closed && <Chip label={t("event.closed")} size="small" sx={{ color: "#f85149", borderColor: "#f85149" }} />}
         </Box>
-        <Typography variant="h4" sx={{ fontWeight: 700, color: "#e6edf3", mb: 1 }}>
-          {event.title}
-        </Typography>
+        <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+          <Typography variant="h4" sx={{ fontWeight: 700, color: "#e6edf3", mb: 1, flex: 1 }}>
+            {displayTitle}
+          </Typography>
+          <Chip
+            icon={translating ? <CircularProgress size={12} /> : <TranslateIcon sx={{ fontSize: 14 }} />}
+            label={translating ? "Traduzindo..." : "PT"}
+            size="small"
+            variant="outlined"
+            onClick={handleTranslate}
+            disabled={translating}
+            sx={{
+              mt: 0.5,
+              color: translatedTitle ? "#7c3aed" : "#484f58",
+              borderColor: translatedTitle ? "#7c3aed44" : "#30363d",
+              cursor: translating ? "default" : "pointer",
+              "&:hover": { borderColor: "#7c3aed", color: "#7c3aed" },
+            }}
+          />
+        </Box>
         {event.description && (
           <Typography variant="body2" sx={{ color: "#8b949e", maxWidth: 700 }}>
-            {event.description}
+            {displayDesc}
           </Typography>
         )}
       </Box>

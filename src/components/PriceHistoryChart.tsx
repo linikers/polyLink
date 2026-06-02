@@ -14,6 +14,7 @@ import {
   Filler,
 } from "chart.js";
 import { getPriceHistory, PRICE_INTERVALS, type PriceInterval } from "@/lib/api";
+import { useLang } from "@/lib/lang";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler);
 
@@ -22,6 +23,7 @@ interface Props {
 }
 
 export default function PriceHistoryChart({ conditionId }: Props) {
+  const { t } = useLang();
   const [interval, setInterval] = useState<PriceInterval>("1m");
   const [history, setHistory] = useState<{ t: number; p: string }[]>([]);
   const [loading, setLoading] = useState(true);
@@ -118,7 +120,7 @@ export default function PriceHistoryChart({ conditionId }: Props) {
         ) : error || history.length === 0 ? (
           <Box sx={{ height: 250, display: "flex", alignItems: "center", justifyContent: "center" }}>
             <Typography variant="body2" sx={{ color: "#8b949e" }}>
-              {error ?? "Nenhum histórico disponível"}
+              {error ?? t("chart.noHistory")}
             </Typography>
           </Box>
         ) : (

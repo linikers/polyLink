@@ -155,7 +155,7 @@ export default function MarketDetail({ event }: Props) {
       {/* Intelligence Score — com ErrorBoundary próprio */}
       {!closed && (
         <Box sx={{ mb: 4 }}>
-          <ErrorBoundary fallback={<SectionFallback label="Intelligence Score indisponível" />}>
+          <ErrorBoundary fallback={<SectionFallback label={t("section.intelUnavailable")} />}>
             <IntelligenceScoreCard
               event={event}
               yesPrice={yesPrice}
@@ -171,7 +171,7 @@ export default function MarketDetail({ event }: Props) {
           <Typography variant="h6" sx={{ fontWeight: 600, color: "#e6edf3", mb: 2 }}>
             {t("detail.priceHistory")}
           </Typography>
-          <ErrorBoundary fallback={<SectionFallback label="Gráfico indisponível" />}>
+          <ErrorBoundary fallback={<SectionFallback label={t("section.chartUnavailable")} />}>
             <PriceChart conditionId={conditionId} />
           </ErrorBoundary>
         </Box>
@@ -184,7 +184,7 @@ export default function MarketDetail({ event }: Props) {
             <Typography variant="h6" sx={{ fontWeight: 600, color: "#e6edf3", mb: 2 }}>
               {t("detail.orderbook")}
             </Typography>
-            <ErrorBoundary fallback={<SectionFallback label="Livro de ofertas indisponível" />}>
+            <ErrorBoundary fallback={<SectionFallback label={t("section.orderbookUnavailable")} />}>
               <OrderBook tokenId={yesTokenId} />
             </ErrorBoundary>
           </Grid2>
@@ -192,7 +192,7 @@ export default function MarketDetail({ event }: Props) {
             <Typography variant="h6" sx={{ fontWeight: 600, color: "#e6edf3", mb: 2 }}>
               {t("detail.trades")}
             </Typography>
-            <ErrorBoundary fallback={<SectionFallback label="Negociações indisponíveis" />}>
+            <ErrorBoundary fallback={<SectionFallback label={t("section.tradesUnavailable")} />}>
               <RecentTrades conditionId={conditionId} />
             </ErrorBoundary>
           </Grid2>

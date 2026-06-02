@@ -132,6 +132,53 @@ const translations: Record<Lang, Record<string, string>> = {
     "portfolio.confirm": "Adicionar",
     "portfolio.confirmClose": "Fechar Posição",
     "portfolio.closeTitle": "Fechar Posição",
+    // Common / General
+    "common.loading": "Carregando...",
+    "common.loadMore": "Carregar mais",
+    "common.noMarkets": "Nenhum mercado encontrado.",
+    "common.retry": "Tentar novamente",
+    "common.reload": "Recarregar página",
+    "common.errorTitle": "Algo deu errado",
+    "common.errorDesc": "Um erro inesperado ocorreu ao renderizar esta seção.",
+    // PriceChart
+    "chart.noHistory": "Nenhum histórico disponível",
+    // News
+    "news.refresh": "Atualizar",
+    "news.noNews": "Nenhuma notícia encontrada para esta categoria.",
+    "news.mockMode": "Modo simulado — configure NEXT_PUBLIC_NEWSAPI_KEY no .env para notícias reais",
+    "news.lastUpdate": "Última atualização",
+    // Whale
+    "whale.title": "Top 20 wallets por volume de trade",
+    "whale.updated": "atualizado a cada 60s",
+    "whale.noWhales": "Nenhuma whale identificada ainda. Tente novamente em instantes.",
+    "whale.wallet": "Wallet",
+    "whale.trades": "Trades",
+    "whale.buySell": "Compra/Venda",
+    "whale.confidence": "Confiança",
+    // Arbitrage
+    "arbitrage.sum": "Soma",
+    "arbitrage.return": "Retorno",
+    // Alerts
+    "alerts.none": "Nenhum alerta ainda.",
+    // Opportunity
+    "opportunity.none": "Nenhuma oportunidade encontrada.",
+    "opportunity.all": "Todos",
+    "opportunity.high": "High Opportunity",
+    "opportunity.medium": "Medium Opportunity",
+    "opportunity.low": "Low Opportunity",
+    "opportunity.liquidity": "Liquidez",
+    "opportunity.volatility": "Volatilidade",
+    "opportunity.momentum": "Momentum",
+    // Error pages
+    "error.pageTitle": "Erro ao carregar",
+    "error.pageDesc": "Ocorreu um erro ao carregar a página. Pode ser um problema de rede com a API do Polymarket ou um cache desatualizado.",
+    "error.criticalTitle": "Erro crítico na aplicação",
+    "error.criticalDesc": "Não foi possível carregar o polyLink. Isso pode ser causado por um cache desatualizado. Tente limpar o cache do navegador ou usar uma janela anônima.",
+    // Section fallbacks
+    "section.intelUnavailable": "Intelligence Score indisponível",
+    "section.chartUnavailable": "Gráfico indisponível",
+    "section.orderbookUnavailable": "Livro de ofertas indisponível",
+    "section.tradesUnavailable": "Negociações indisponíveis",
     // Categories
     "category.all": "Todos",
     "category.politics": "Política",
@@ -257,6 +304,53 @@ const translations: Record<Lang, Record<string, string>> = {
     "portfolio.confirm": "Add",
     "portfolio.confirmClose": "Close Position",
     "portfolio.closeTitle": "Close Position",
+    // Common / General
+    "common.loading": "Loading...",
+    "common.loadMore": "Load more",
+    "common.noMarkets": "No markets found.",
+    "common.retry": "Try again",
+    "common.reload": "Reload page",
+    "common.errorTitle": "Something went wrong",
+    "common.errorDesc": "An unexpected error occurred while rendering this section.",
+    // PriceChart
+    "chart.noHistory": "No history available",
+    // News
+    "news.refresh": "Refresh",
+    "news.noNews": "No news found for this category.",
+    "news.mockMode": "Simulated mode — set NEXT_PUBLIC_NEWSAPI_KEY in .env for real news",
+    "news.lastUpdate": "Last update",
+    // Whale
+    "whale.title": "Top 20 wallets by trade volume",
+    "whale.updated": "updated every 60s",
+    "whale.noWhales": "No whales identified yet. Try again in a moment.",
+    "whale.wallet": "Wallet",
+    "whale.trades": "Trades",
+    "whale.buySell": "Buy/Sell",
+    "whale.confidence": "Confidence",
+    // Arbitrage
+    "arbitrage.sum": "Sum",
+    "arbitrage.return": "Return",
+    // Alerts
+    "alerts.none": "No alerts yet.",
+    // Opportunity
+    "opportunity.none": "No opportunities found.",
+    "opportunity.all": "All",
+    "opportunity.high": "High Opportunity",
+    "opportunity.medium": "Medium Opportunity",
+    "opportunity.low": "Low Opportunity",
+    "opportunity.liquidity": "Liquidity",
+    "opportunity.volatility": "Volatility",
+    "opportunity.momentum": "Momentum",
+    // Error pages
+    "error.pageTitle": "Error loading page",
+    "error.pageDesc": "An error occurred while loading the page. This may be a network issue with the Polymarket API or outdated cache.",
+    "error.criticalTitle": "Critical application error",
+    "error.criticalDesc": "Could not load polyLink. This may be caused by outdated cache. Try clearing your browser cache or using an incognito window.",
+    // Section fallbacks
+    "section.intelUnavailable": "Intelligence Score unavailable",
+    "section.chartUnavailable": "Chart unavailable",
+    "section.orderbookUnavailable": "Orderbook unavailable",
+    "section.tradesUnavailable": "Trades unavailable",
     // Categories
     "category.all": "All",
     "category.politics": "Politics",

@@ -114,7 +114,7 @@ export default function HomePage() {
       {/* Events grid */}
       {loading ? (
         <Box sx={{ textAlign: "center", py: 6, color: "#484f58" }}>
-          <Typography variant="body2">Carregando...</Typography>
+          <Typography variant="body2">{t("common.loading")}</Typography>
         </Box>
       ) : !Array.isArray(events) ? (
         <Box sx={{ textAlign: "center", py: 6 }}>
@@ -125,7 +125,7 @@ export default function HomePage() {
       ) : events.length === 0 ? (
         <Box sx={{ textAlign: "center", py: 6 }}>
           <Typography variant="body2" sx={{ color: "#8b949e" }}>
-            Nenhum mercado encontrado.
+t("common.noMarkets")
           </Typography>
         </Box>
       ) : (
@@ -154,7 +154,7 @@ export default function HomePage() {
                 "&:hover": { borderColor: "#7c3aed", color: "#e6edf3" },
               }}
             >
-              {loadingMore ? "Carregando..." : "Carregar mais"}
+              {loadingMore ? t("common.loading") : t("common.loadMore")}
             </Button>
           </Box>
         )}

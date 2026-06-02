@@ -9,6 +9,7 @@ import {
   Grid2,
   Card,
   CardContent,
+  Button,
   CircularProgress,
 } from "@mui/material";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
@@ -21,6 +22,7 @@ import RecentTrades from "@/components/RecentTrades";
 import { useLang } from "@/lib/lang";
 import IntelligenceScoreCard from "@/components/IntelligenceScore";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import TradeDialog from "@/components/TradeDialog";
 
 interface Props {
   event: GammaEvent;
@@ -42,6 +44,8 @@ function SectionFallback({ label }: { label: string }) {
 
 export default function MarketDetail({ event }: Props) {
   const { t } = useLang();
+  const [tradeOpen, setTradeOpen] = useState(false);
+  const [tradeSide, setTradeSide] = useState<"YES" | "NO">("YES");
   const market = event.markets?.[0];
   if (!market) {
     return (
@@ -60,6 +64,7 @@ export default function MarketDetail({ event }: Props) {
   const closed = event.closed || market.closed;
 
   return (
+    <>
     <Container maxWidth="lg" sx={{ py: 4 }}>
       {/* Back link */}
       <Link href="/" style={{ color: "#7c3aed", textDecoration: "none", fontSize: 14 }}>
@@ -104,6 +109,29 @@ export default function MarketDetail({ event }: Props) {
                 <Box sx={{ width: `${yesPct}%`, bgcolor: "#3fb950", transition: "width 0.5s" }} />
                 <Box sx={{ flex: 1, bgcolor: "#f85149" }} />
               </Box>
+              {/* Trade buttons */}
+              {!closed && (
+                <Box sx={{ display: "flex", gap: 1, mt: 2 }}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    onClick={() => { setTradeSide("YES"); setTradeOpen(true); }}
+                    sx={{ color: "#3fb950", borderColor: "#3fb95044", textTransform: "none", fontWeight: 600, "&:hover": { bgcolor: "rgba(63,185,80,0.1)" } }}
+                  >
+                    📈 {t("event.yes")} {fmtPercent(yesPrice)}
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    onClick={() => { setTradeSide("NO"); setTradeOpen(true); }}
+                    sx={{ color: "#f85149", borderColor: "#f8514944", textTransform: "none", fontWeight: 600, "&:hover": { bgcolor: "rgba(248,81,73,0.1)" } }}
+                  >
+                    📉 {t("event.no")} {fmtPercent(noPrice)}
+                  </Button>
+                </Box>
+              )}
             </CardContent>
           </Card>
         </Grid2>
@@ -207,5 +235,17 @@ export default function MarketDetail({ event }: Props) {
         </Box>
       )}
     </Container>
+
+      {/* Trade Dialog */}
+      <TradeDialog
+        open={tradeOpen}
+        onClose={() => setTradeOpen(false)}
+        marketSlug={event.slug}
+        marketTitle={event.title}
+        tokenId={yesTokenId}
+        yesPrice={Number(yesPrice)}
+        category={event.category}
+      />
+    </>
   );
 }

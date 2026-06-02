@@ -7,11 +7,26 @@ const DATA = "https://data-api.polymarket.com";
 export const REVALIDATE = 30; // seconds for ISR / server components
 
 async function fetchJson<T>(url: string): Promise<T> {
-  const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error(`Polymarket API ${res.status}: ${res.statusText}`);
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000);
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    if (!res.ok) {
+      throw new Error(`Polymarket API ${res.status}: ${res.statusText}`);
+    }
+    const text = await res.text();
+    if (!text || text.trim() === "") {
+      throw new Error("Empty response from Polymarket API");
+    }
+    return JSON.parse(text);
+  } catch (e) {
+    clearTimeout(timeoutId);
+    if (e instanceof DOMException && e.name === "AbortError") {
+      throw new Error("Polymarket API timeout (15s)");
+    }
+    throw e;
   }
-  return res.json();
 }
 
 function parseJsonField(val: string): unknown {
@@ -102,6 +117,13 @@ export type PriceInterval = (typeof PRICE_INTERVALS)[number]["id"];
 // ─── Helpers ──────────────────────────────────────────
 
 export function parseMarket(market: any) {
+  if (!market || typeof market !== "object") {
+    return {
+      outcomesParsed: [] as string[],
+      outcomePricesParsed: [] as string[],
+      clobTokenIdsParsed: [] as string[],
+    };
+  }
   const outcomes = parseJsonField(market.outcomes) as string[] ?? ["Yes", "No"];
   const outcomePrices = parseJsonField(market.outcomePrices) as string[] ?? [];
   const clobTokenIds = parseJsonField(market.clobTokenIds) as string[] ?? [];

@@ -41,7 +41,7 @@ export default function IntelligenceScoreCard({
   const [whaleActivity, setWhaleActivity] = useState<number | undefined>();
   const [loadingWhale, setLoadingWhale] = useState(true);
   const [estimate, setEstimate] = useState(
-    edgeEstimate ?? Math.round(Number(yesPrice) * 100)
+    edgeEstimate ?? Math.round(Number(yesPrice || "0") * 100)
   );
 
   // Fetch recent trades to estimate whale interest in this market
@@ -49,7 +49,7 @@ export default function IntelligenceScoreCard({
     let cancelled = false;
     async function load() {
       try {
-        const market = event.markets?.[0];
+        const market = event?.markets?.[0];
         if (!market?.conditionId) {
           setWhaleActivity(30);
           return;

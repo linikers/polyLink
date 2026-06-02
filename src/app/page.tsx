@@ -7,6 +7,7 @@ import SearchMarkets from "@/components/SearchMarkets";
 import EventCard from "@/components/EventCard";
 import { getTrendingEvents, getEventsByCategory, CATEGORIES, type CategoryId } from "@/lib/api";
 import { useLang } from "@/lib/lang";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 const PAGE_SIZE = 12;
 
@@ -115,18 +116,26 @@ export default function HomePage() {
         <Box sx={{ textAlign: "center", py: 6, color: "#484f58" }}>
           <Typography variant="body2">Carregando...</Typography>
         </Box>
-      ) : !Array.isArray(events) || events.length === 0 ? (
+      ) : !Array.isArray(events) ? (
         <Box sx={{ textAlign: "center", py: 6 }}>
           <Typography variant="body2" sx={{ color: "#8b949e" }}>
             {t("trending.empty")}
+          </Typography>
+        </Box>
+      ) : events.length === 0 ? (
+        <Box sx={{ textAlign: "center", py: 6 }}>
+          <Typography variant="body2" sx={{ color: "#8b949e" }}>
+            Nenhum mercado encontrado.
           </Typography>
         </Box>
       ) : (
         <>
         <Grid2 container spacing={2}>
           {events.filter(Boolean).map((evt: any) => (
-            <Grid2 key={evt?.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-              <EventCard event={evt} />
+            <Grid2 key={evt?.id ?? Math.random()} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+              <ErrorBoundary key={evt?.id}>
+                <EventCard event={evt} />
+              </ErrorBoundary>
             </Grid2>
           ))}
         </Grid2>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   Box,
   TextField,
@@ -24,6 +24,8 @@ export default function SearchMarkets({ onSearch }: Props) {
   const [results, setResults] = useState<GammaEvent[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const onSearchRef = useRef(onSearch);
+  onSearchRef.current = onSearch;
 
   const doSearch = useCallback(async (q: string) => {
     if (q.trim().length < 2) {
@@ -34,15 +36,16 @@ export default function SearchMarkets({ onSearch }: Props) {
     setError(null);
     try {
       const data = await searchMarkets(q.trim());
-      setResults(Array.isArray(data.events) ? data.events : []);
-      onSearch?.(q);
+      const evts = Array.isArray(data.events) ? data.events : [];
+      setResults(evts);
+      onSearchRef.current?.(q);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erro ao buscar");
       setResults([]);
     } finally {
       setLoading(false);
     }
-  }, [onSearch]);
+  }, []); // onSearch via ref — sem recreação do callback
 
   useEffect(() => {
     const timer = setTimeout(() => doSearch(query), 400);
@@ -96,8 +99,8 @@ export default function SearchMarkets({ onSearch }: Props) {
             </Typography>
           ) : (
             results.slice(0, 10).map((evt: GammaEvent) => (
-              <Box key={evt.id}>
-                <EventCard event={evt} />
+              <Box key={evt?.id ?? Math.random()}>
+                {evt ? <EventCard event={evt} /> : null}
               </Box>
             ))
           )}

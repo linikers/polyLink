@@ -14,6 +14,41 @@ import { fmtPercent, fmtVolume, parseMarket } from "@/lib/api";
 import { useLang } from "@/lib/lang";
 import { calcIntelligenceScores, intelligenceGradeColor, intelligenceGradeIcon } from "@/lib/intelligence";
 
+/** Intelligence Score badge — extraído em componente puro para evitar IIFE em JSX */
+function IntelBadge({ event, closed }: { event: GammaEvent; closed: boolean }) {
+  try {
+    if (closed || !event.markets?.length) return null;
+    const m = parseMarket(event.markets[0]);
+    const s = calcIntelligenceScores({
+      liquidity: event.liquidity ?? 0,
+      volume: event.volume ?? 0,
+      openInterest: event.openInterest ?? 0,
+      yesPrice: Number(m.outcomePricesParsed[0] ?? 0),
+      noPrice: Number(m.outcomePricesParsed[1] ?? 0),
+      change24h: (event as any).priceChange24h ?? 0,
+      category: event.category,
+    });
+    if (s.composite < 40) return null;
+    const color = intelligenceGradeColor(s.grade);
+    const icon = intelligenceGradeIcon(s.grade);
+    return (
+      <Chip
+        label={`${icon} ${s.composite}`}
+        size="small"
+        sx={{
+          height: 18,
+          fontSize: 10,
+          fontWeight: 700,
+          bgcolor: `${color}18`,
+          color,
+        }}
+      />
+    );
+  } catch {
+    return null; // falha silenciosa — não quebra o card
+  }
+}
+
 interface Props {
   event: GammaEvent;
 }
@@ -52,35 +87,7 @@ export default function EventCard({ event }: Props) {
           <Typography variant="body2" sx={{ color: "#8b949e" }}>
             {event.category ?? t("event.category.default")}
           </Typography>
-          {(() => {
-            if (!event.markets?.[0] || closed) return null;
-            const m = parseMarket(event.markets[0]);
-            const s = calcIntelligenceScores({
-              liquidity: event.liquidity ?? 0,
-              volume: event.volume ?? 0,
-              openInterest: event.openInterest ?? 0,
-              yesPrice: Number(m.outcomePricesParsed[0] ?? 0),
-              noPrice: Number(m.outcomePricesParsed[1] ?? 0),
-              change24h: (event as any).priceChange24h ?? 0,
-              category: event.category,
-            });
-            if (s.composite < 40) return null;
-            const color = intelligenceGradeColor(s.grade);
-            const icon = intelligenceGradeIcon(s.grade);
-            return (
-              <Chip
-                label={`${icon} ${s.composite}`}
-                size="small"
-                sx={{
-                  height: 18,
-                  fontSize: 10,
-                  fontWeight: 700,
-                  bgcolor: `${color}18`,
-                  color,
-                }}
-              />
-            );
-          })()}
+          <IntelBadge event={event} closed={closed} />
         </Box>
         <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2, lineHeight: 1.3 }}>
           {event.title}

@@ -1,7 +1,16 @@
+import { Box, CircularProgress } from "@mui/material";
+
 export default function Loading() {
   return (
-    <div style={{ display: "flex", justifyContent: "center", padding: "4rem", color: "#8b949e" }}>
-      Loading...
-    </div>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "60vh",
+      }}
+    >
+      <CircularProgress size={32} sx={{ color: "#7c3aed" }} />
+    </Box>
   );
 }

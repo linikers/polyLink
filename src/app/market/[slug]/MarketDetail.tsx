@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useEffect, useState } from "react";
 import {
   Container,
   Typography,
@@ -9,9 +9,9 @@ import {
   Grid2,
   Card,
   CardContent,
-  Divider,
   CircularProgress,
 } from "@mui/material";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import Link from "next/link";
 import type { GammaEvent } from "@/lib/types";
 import { fmtVolume, fmtPercent, parseMarket } from "@/lib/api";
@@ -20,9 +20,24 @@ import PriceChart from "@/components/PriceHistoryChart";
 import RecentTrades from "@/components/RecentTrades";
 import { useLang } from "@/lib/lang";
 import IntelligenceScoreCard from "@/components/IntelligenceScore";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 interface Props {
   event: GammaEvent;
+}
+
+/** Fallback compacto para seções que falham — não quebra o layout */
+function SectionFallback({ label }: { label: string }) {
+  return (
+    <Card sx={{ bgcolor: "#161b22", border: "1px solid #30363d", borderRadius: 2 }}>
+      <CardContent sx={{ textAlign: "center", py: 4 }}>
+        <ErrorOutlineIcon sx={{ fontSize: 24, color: "#484f58", mb: 1 }} />
+        <Typography variant="body2" sx={{ color: "#484f58" }}>
+          {label}
+        </Typography>
+      </CardContent>
+    </Card>
+  );
 }
 
 export default function MarketDetail({ event }: Props) {
@@ -69,7 +84,7 @@ export default function MarketDetail({ event }: Props) {
         )}
       </Box>
 
-      {/* Probability + Volume */}
+      {/* Probability + Stats — sempre seguro, sem fetch externo */}
       <Grid2 container spacing={3} sx={{ mb: 4 }}>
         <Grid2 size={{ xs: 12, md: 6 }}>
           <Card sx={{ bgcolor: "#161b22", border: "1px solid #30363d", borderRadius: 2 }}>
@@ -137,41 +152,49 @@ export default function MarketDetail({ event }: Props) {
         </Grid2>
       </Grid2>
 
-      {/* Intelligence Score */}
+      {/* Intelligence Score — com ErrorBoundary próprio */}
       {!closed && (
         <Box sx={{ mb: 4 }}>
-          <IntelligenceScoreCard
-            event={event}
-            yesPrice={yesPrice}
-            noPrice={noPrice}
-          />
+          <ErrorBoundary fallback={<SectionFallback label="Intelligence Score indisponível" />}>
+            <IntelligenceScoreCard
+              event={event}
+              yesPrice={yesPrice}
+              noPrice={noPrice}
+            />
+          </ErrorBoundary>
         </Box>
       )}
 
-      {/* Price Chart */}
+      {/* Price Chart — com ErrorBoundary próprio */}
       {conditionId && !closed && (
         <Box sx={{ mb: 4 }}>
           <Typography variant="h6" sx={{ fontWeight: 600, color: "#e6edf3", mb: 2 }}>
             {t("detail.priceHistory")}
           </Typography>
-          <PriceChart conditionId={conditionId} />
+          <ErrorBoundary fallback={<SectionFallback label="Gráfico indisponível" />}>
+            <PriceChart conditionId={conditionId} />
+          </ErrorBoundary>
         </Box>
       )}
 
-      {/* Orderbook + Trades */}
+      {/* Orderbook + Trades — CADA UM com ErrorBoundary próprio */}
       {yesTokenId && !closed && (
-        <Grid2 container spacing={3}>
+        <Grid2 container spacing={3} sx={{ mb: 4 }}>
           <Grid2 size={{ xs: 12, md: 6 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, color: "#e6edf3", mb: 2 }}>
               {t("detail.orderbook")}
             </Typography>
-            <OrderBook tokenId={yesTokenId} />
+            <ErrorBoundary fallback={<SectionFallback label="Livro de ofertas indisponível" />}>
+              <OrderBook tokenId={yesTokenId} />
+            </ErrorBoundary>
           </Grid2>
           <Grid2 size={{ xs: 12, md: 6 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, color: "#e6edf3", mb: 2 }}>
               {t("detail.trades")}
             </Typography>
-            <RecentTrades conditionId={conditionId} />
+            <ErrorBoundary fallback={<SectionFallback label="Negociações indisponíveis" />}>
+              <RecentTrades conditionId={conditionId} />
+            </ErrorBoundary>
           </Grid2>
         </Grid2>
       )}

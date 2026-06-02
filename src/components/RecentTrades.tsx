@@ -1,20 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  CircularProgress,
-  Chip,
-} from "@mui/material";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import CircularProgress from "@mui/material/CircularProgress";
+import Chip from "@mui/material/Chip";
 import { getRecentTrades, fmtPercent } from "@/lib/api";
 import { useLang } from "@/lib/lang";
 
@@ -75,26 +73,26 @@ export default function RecentTrades({ conditionId }: Props) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {trades.slice(0, 15).map((t: any, i: number) => (
+              {trades.slice(0, 15).map((trade: any, i: number) => (
                 <TableRow key={`trade-${i}`}>
                   <TableCell sx={{ borderColor: "#30363d", py: 0.75 }}>
                     <Chip
-                      label={t.side === "BUY" ? t("trades.buy") : t("trades.sell")}
+                      label={trade.side === "BUY" ? t("trades.buy") : t("trades.sell")}
                       size="small"
                       sx={{
                         height: 20,
                         fontSize: 10,
                         fontWeight: 700,
-                        bgcolor: t.side === "BUY" ? "rgba(63, 185, 80, 0.15)" : "rgba(248, 81, 73, 0.15)",
-                        color: t.side === "BUY" ? "#3fb950" : "#f85149",
+                        bgcolor: trade.side === "BUY" ? "rgba(63, 185, 80, 0.15)" : "rgba(248, 81, 73, 0.15)",
+                        color: trade.side === "BUY" ? "#3fb950" : "#f85149",
                       }}
                     />
                   </TableCell>
                   <TableCell sx={{ color: "#e6edf3", borderColor: "#30363d", py: 0.75, fontFamily: "monospace" }} align="right">
-                    {fmtPercent(t.price)}
+                    {fmtPercent(trade.price)}
                   </TableCell>
                   <TableCell sx={{ color: "#e6edf3", borderColor: "#30363d", py: 0.75, fontFamily: "monospace" }} align="right">
-                    {Number(t.size).toFixed(2)}
+                    {Number(trade.size).toFixed(2)}
                   </TableCell>
                 </TableRow>
               ))}

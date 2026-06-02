@@ -24,6 +24,7 @@ import WhaleIcon from "@mui/icons-material/WaterDrop";
 import NewReleasesIcon from "@mui/icons-material/NewReleases";
 import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 import EmojiObjectsIcon from "@mui/icons-material/EmojiObjects";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import Link from "next/link";
 import { useLang } from "@/lib/lang";
 import AlertCenter from "./AlertCenter";
@@ -31,9 +32,11 @@ import WhaleDashboard from "./WhaleDashboard";
 import NewsDashboard from "./NewsDashboard";
 import ArbitrageEngine from "./ArbitrageEngine";
 import OpportunityScanner from "./OpportunityScanner";
+import PortfolioDashboard from "./PortfolioDashboard";
 
 const tabs = [
   { id: "dashboard", labelKey: "admin.dashboard", icon: <DashboardIcon /> },
+  { id: "portfolio", labelKey: "admin.portfolio", icon: <AccountBalanceWalletIcon /> },
   { id: "opportunities", labelKey: "admin.opportunities", icon: <EmojiObjectsIcon /> },
   { id: "arbitrage", labelKey: "admin.arbitrage", icon: <AutoFixHighIcon /> },
   { id: "whales", labelKey: "admin.whales", icon: <WhaleIcon /> },
@@ -76,12 +79,17 @@ export default function AdminLayout({ activeTab = "dashboard", children }: Props
     <OpportunityScanner />
   );
 
+  const portfolioContent = (
+    <PortfolioDashboard />
+  );
+
   const content = children || (
     tab === "alerts" ? alertContent :
     tab === "whales" ? whaleContent :
     tab === "news" ? newsContent :
     tab === "arbitrage" ? arbitrageContent :
-    tab === "opportunities" ? opportunitiesContent : (
+    tab === "opportunities" ? opportunitiesContent :
+    tab === "portfolio" ? portfolioContent : (
       <Grid2 container spacing={3}>
         {/* Stats cards */}
         {[
